@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование урока | {{ course.name }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+      .editor-wrapper{max-width:960px;margin:40px auto;padding:24px;border-radius:16px;background:#0b0b11;border:1px solid rgba(255,255,255,.06);}
+      .editor-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+      .editor-header h1{font-size:22px;margin:0;}
+      .tag{font-size:13px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.06);}
+      .form-group{margin-bottom:16px;}
+      label{display:block;font-weight:600;font-size:14px;margin-bottom:6px;}
+      .input,.textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.35);color:#fff;font-size:14px;}
+      .textarea{min-height:220px;font-family:monospace;resize:vertical;white-space:pre-wrap;}
+      .help{font-size:12px;color:rgba(255,255,255,.55);margin-top:4px;}
+      .toolbar{display:flex;gap:12px;align-items:center;margin-bottom:10px;}
+      .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid rgba(0,255,204,.4);background:rgba(0,255,204,.05);color:#0ff;font-size:13px;font-weight:600;text-decoration:none;cursor:pointer;}
+      .btn--ghost{border-color:rgba(255,255,255,.18);background:transparent;color:#fff;}
+      .btn--danger{border-color:rgba(255,107,107,.5);background:rgba(255,107,107,.12);color:#ffdede;}
+      .btn--primary{background:linear-gradient(90deg,#00f5a0,#00d9ff);border:none;color:#02030a;}
+      .btn i{font-size:13px;}
+      .row{display:flex;gap:16px;flex-wrap:wrap;}
+      .row > div{flex:1 1 0;}
+      .badge-type{font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.7;}
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="container">
+        <div class="header__inner">
+            <a href="{{ url_for('user.index')}}" class="logo">
+                <img src="{{url_for('static', filename = 'img/logo.png')}}" alt="SkillUp">
+            </a>
+            <nav class="nav">
+                <ul class="nav__list">
+                    <li><a href="{{ url_for('user.index')}}" class="nav__link">Главная</a></li>
+                    <li><a href="{{ url_for('post.create')}}" class="nav__link">Курсы</a></li>
+                    <li><a href="{{ url_for('teacher.create')}}" class="nav__link">Преподаватели</a></li>
+                    <li><a href="{{ url_for('user.contacts')}}" class="nav__link">Контакты</a></li>
+                </ul>
+            </nav>
+            <div class="header__auth">
+                {% if current_user.is_authenticated %}
+                    <span class="user-greeting">{{ current_user.name }}</span>
+                    <a href="{{ url_for('user.logout') }}" class="btn btn--ghost">Выйти</a>
+                {% else %}
+                    <a href="{{ url_for('user.login')}}" class="btn btn--ghost">Войти</a>
+                    <a href="{{ url_for('user.register')}}" class="btn btn--primary">Записаться</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+
+<main>
+  <div class="container">
+    <div class="editor-wrapper">
+      <div class="editor-header">
+        <div>
+          <div class="badge-type">
+            {% if lesson.lesson_type == LessonType.lecture %}Лекция{% elif lesson.lesson_type == LessonType.test %}Тест{% else %}Лабораторная{% endif %}
+          </div>
+          <h1>Редактирование урока: {{ lesson.title }}</h1>
+          <div class="help">Курс: {{ course.name }}</div>
+        </div>
+        <a href="{{ url_for('course.course_admin', course_id=course.id) }}" class="btn btn--ghost">
+          <i class="fa-solid fa-arrow-left"></i> Назад к структуре курса
+        </a>
+      </div>
+
+      <form method="POST">
+        <div class="form-group">
+          <label for="title">Название урока</label>
+          <input id="title" name="title" class="input" type="text" value="{{ lesson.title }}">
+        </div>
+
+        {% if lesson.lesson_type == LessonType.lecture or lesson.lesson_type == LessonType.lab %}
+        <div class="form-group">
+          <label for="html_content">
+            Контент урока (HTML)
+          </label>
+          <div class="toolbar">
+            <span class="help">Можно использовать &lt;h2&gt;, &lt;p&gt;, &lt;code&gt;, &lt;img&gt;, &lt;table&gt; и т.д.</span>
+          </div>
+          <textarea id="html_content" name="html_content" class="textarea">{% if lesson.html_content %}{{ lesson.html_content|e }}{% endif %}</textarea>
+          <div class="help">
+            Это будет рендериться как HTML в уроке. Например:
+            <code>&lt;p&gt;<b>Важно:</b> не забываем закрывать теги.&lt;/p&gt;</code>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if lesson.lesson_type == LessonType.lecture %}
+        <div class="form-group">
+          <label for="video_url">URL видео (YouTube, Vimeo и т.п.)</label>
+          <input id="video_url" name="video_url" class="input" type="url"
+                 value="{{ lesson.video_url or '' }}"
+                 placeholder="https://www.youtube.com/embed/...">
+          <div class="help">Если заполнено, в уроке отобразится встроенный плеер.</div>
+        </div>
+        {% endif %}
+
+        {% if lesson.lesson_type == LessonType.lab %}
+        <div class="form-group">
+          <label for="sandbox_slug">Slug песочницы (lab_slug)</label>
+          <input id="sandbox_slug" name="sandbox_slug" class="input" type="text"
+                 value="{{ lesson.sandbox_slug or '' }}"
+                 placeholder="например, fakebank">
+          <div class="help">Это значение уходит в sandbox-manager при запуске лабы.</div>
+        </div>
+        {% endif %}
+
+        {% if lesson.lesson_type == LessonType.test and lesson.test %}
+        <div class="form-group">
+          <label for="test_title">Название теста</label>
+          <input id="test_title" name="test_title" class="input" type="text"
+                 value="{{ lesson.test.title }}">
+        </div>
+
+        <div class="form-group">
+          <label for="test_description">Описание теста</label>
+          <textarea id="test_description" name="test_description" class="textarea">{% if lesson.test.description %}{{ lesson.test.description }}{% endif %}</textarea>
+          <div class="help">
+            Вопросы добавляются/редактируются в админке курса. Здесь только общее описание.
+          </div>
+        </div>
+        {% endif %}
+
+        {% if lesson.lesson_type == LessonType.lecture or lesson.lesson_type == LessonType.lab %}
+        <div class="form-group">
+          <label>Загрузка картинки</label>
+          <div class="toolbar">
+            <input type="file" id="img-input" accept="image/*" style="max-width:260px;">
+            <button type="button" class="btn" id="btn-upload-img">
+              <i class="fa-solid fa-upload"></i> Загрузить и вставить &lt;img&gt;
+            </button>
+            <span class="help">Файл уйдёт на /course/upload_image, а в HTML вставится готовый тег &lt;img&gt;.</span>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="form-group" style="margin-top:24px;display:flex;gap:12px;justify-content:flex-end;">
+          <a href="{{ url_for('course.course_admin', course_id=course.id) }}" class="btn btn--ghost">
+            Отмена
+          </a>
+          <button type="submit" class="btn btn--primary">
+            <i class="fa-solid fa-floppy-disk"></i> Сохранить
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<script>
+(function(){
+  const btn = document.getElementById('btn-upload-img');
+  const fileInput = document.getElementById('img-input');
+  const textarea = document.getElementById('html_content');
+
+  if(!btn || !fileInput || !textarea) return;
+
+  btn.addEventListener('click', function(){
+    if(!fileInput.files.length){
+      alert('Сначала выбери файл');
+      return;
+    }
+    const fd = new FormData();
+    fd.append('image', fileInput.files[0]);
+
+    fetch('{{ url_for("course.upload_image") }}', {
+      method: 'POST',
+      body: fd,
+      credentials: 'include'
+    }).then(r => r.json())
+      .then(data => {
+        if(data.error){
+          alert('Ошибка загрузки: ' + data.error);
+          return;
+        }
+        const url = data.url;
+        const imgTag = '<img src="' + url + '" alt="">';
+        const start = textarea.selectionStart || textarea.value.length;
+        const end = textarea.selectionEnd || textarea.value.length;
+        const before = textarea.value.substring(0, start);
+        const after  = textarea.value.substring(end);
+        textarea.value = before + imgTag + after;
+        textarea.focus();
+      })
+      .catch(e => {
+        console.error(e);
+        alert('Ошибка сети при загрузке картинки');
+      });
+  });
+})();
+</script>
+
+</body>
+</html>

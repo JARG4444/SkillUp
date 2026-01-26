@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillUp | Регистрация</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{url_for('static', filename = 'css/style.css')}}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header__inner">
+                <a href="{{ url_for('user.index')}}" class="logo">
+                    <img src="{{url_for('static', filename='img/logo.png')}}" alt="SkillUp">
+                </a>
+                <nav class="nav">
+                    <ul class="nav__list">
+                        <li><a href="{{ url_for('user.index')}}" class="nav__link active">Главная</a></li>
+                        <li><a href="{{ url_for('post.create')}}" class="nav__link">Курсы</a></li>
+                        <li><a href="{{ url_for('teacher.create')}}" class="nav__link">Преподаватели</a></li>
+                        <li><a href="{{ url_for('user.contacts')}}" class="nav__link">Контакты</a></li>
+                        {% if current_user.is_authenticated %}
+                            <li><a href="{{ url_for('user.account') }}" class="nav__link">Личный кабинет</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                <div class="header__auth">
+                    {% if current_user.is_authenticated %}
+                        <span class="user-greeting">{{ current_user.name }}</span>
+                        <a href="{{ url_for('user.logout') }}" class="btn btn--login">Выйти</a>
+                    {% else %}
+                        <a href="{{ url_for('user.login')}}" class="btn btn--login">Войти</a>
+                        <a href="{{ url_for('user.register')}}" class="btn btn--primary">Записаться</a>
+                    {% endif %}
+                </div>
+                <button class="burger" id="burger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной блок регистрации -->
+    <section class="auth-section">
+        <div class="container">
+            <div class="auth__wrapper">
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alert-messages">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                
+                <div class="auth__header">
+                    <h1>Создайте аккаунт</h1>
+                    <p>Присоединяйтесь к сообществу SkillUp</p>
+                </div>
+                
+                <form class="admin__form" method="POST" action="{{ url_for('user.register') }}">
+                    <div class="form__group">
+                        <label for="name">Имя пользователя</label>
+                        <input type="text" id="name" name="name" placeholder="Введите ФИО" required>
+                        <i class="fas fa-user"></i>
+                    </div>
+
+                    <div class="form__group">
+                        <label for="login">Логин</label>
+                        <input type="text" id="login" name="login" placeholder="Придумайте никнейм" required>
+                        <i class="fas fa-user"></i>
+                    </div>
+
+                    <div class="form__group">
+                        <label for="status">Кто вы?</label>
+                        <select id="status" name="status" required>
+                            <option value="" disabled selected>Выберите вариант</option>
+                            <option value="student">Студент</option>
+                            <option value="teacher">Преподаватель</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form__group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Ваш email" required>
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    
+                    <div class="form__group">
+                        <label for="password">Пароль</label>
+                        <input type="password" id="password" name="password" placeholder="Не менее 8 символов" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    
+                    <div class="form__group">
+                        <label for="confirm_password">Повторите пароль</label>
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Повторите пароль" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    
+                    <div class="form__checkbox">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">Я согласен с <a href="#">условиями использования</a> и <a href="#">политикой конфиденциальности</a></label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn--primary btn--block">Зарегистрироваться</button>
+                    
+                    <div class="auth__footer">
+                        <p>Уже есть аккаунт? <a href="{{ url_for('user.login')}}">Войти</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Подвал (как на главной) -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__inner">
+                <div class="footer__col">
+                    <a href="{{ url_for('user.index')}}" class="logo">
+                        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SkillUp">
+                    </a>
+                    <p class="footer__text">Онлайн-школа SkillUp - обучение современным профессиям с гарантией результата.</p>
+                </div>
+                <div class="footer__col">
+                    <h3 class="footer__title">Контакты</h3>
+                    <ul class="footer__contacts">
+                        <li><i class="fas fa-envelope"></i> info@skillup.ru</li>
+                        <li><i class="fas fa-phone"></i> +7 (999) 123-45-67</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>&copy; 2025 SkillUp. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillUp | Все курсы</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Шапка -->
+
+<header class="header">
+        <div class="container">
+            <div class="header__inner">
+                <a href="{{ url_for('user.index')}}" class="logo">
+                    <img src="{{url_for('static', filename = 'img/logo.png')}}" alt="SkillUp">
+                </a>
+                <nav class="nav">
+                    <ul class="nav__list">
+                        <li><a href="{{ url_for('user.index')}}" class="nav__link">Главная</a></li>
+                        <li><a href="{{ url_for('post.create')}}" class="nav__link active">Курсы</a></li>
+                        <li><a href="{{ url_for('teacher.create')}}" class="nav__link">Преподаватели</a></li>
+                        <li><a href="{{ url_for('user.contacts')}}" class="nav__link">Контакты</a></li>
+                        {% if current_user.is_authenticated %}
+                            <li><a href="{{ url_for('user.account') }}" class="nav__link">Личный кабинет</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                <div class="header__auth">
+                    {% if current_user.is_authenticated %}
+                        <span class="user-greeting">{{ current_user.name }}</span>
+                        <a href="{{ url_for('user.logout') }}" class="btn btn--login">Выйти</a>
+                    {% else %}
+                        <a href="{{ url_for('user.login')}}" class="btn btn--login">Войти</a>
+                        <a href="{{ url_for('user.register')}}" class="btn btn--primary">Записаться</a>
+                    {% endif %}
+                </div>
+                <button class="burger" id="burger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+    <!-- Блок с курсами -->
+    <section class="courses-page">
+        <div class="container">
+            <div class="section__header">
+                <h1 class="section__title">Наши курсы</h1>
+                <p class="section__subtitle">Выберите подходящий курс и начните обучение сегодня</p>
+            </div>
+            
+            <div class="courses__grid">
+                {% for course in courses %}
+                <div class="course__card {% if not course.photo %}course__card--disabled{% endif %}">
+                    {% if course.photo %}
+                    <div class="course__image">
+                        <img src="{{ url_for('static', filename=course.photo) }}" alt="{{ course.name }}">
+                        {% if course.tag %}<span class="course__tag">{{ course.tag }}</span>{% endif %}
+                        {% if current_user.status == 'admin' %}
+                        <div class="course__actions">
+                            <a href="{{ url_for('post.edit', id=course.id) }}" class="btn-edit" title="Изменить">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ url_for('post.delete', id=course.id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn-delete" title="Удалить" 
+                                    onclick="return confirm('Удалить курс «{{ course.name }}»?')">
+                                <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="course__content">
+                        <h3 class="course__title">{{ course.name }}</h3>
+                        <p class="course__desc">{{ course.bio }}</p>
+                        <div class="course__meta">
+                            <span><i class="fas fa-clock"></i> {{ course.exp }} месяцев</span>
+                            <span><i class="fas fa-level-up-alt"></i> {{ course.level }}</span>
+                        </div>
+                        <div class="course__footer">
+                            <a href="{{ url_for('post.detail', id=course.id) }}" class="btn btn--primary">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    {% if current_user.status == 'admin' %}
+    <section class="admin-section">
+        <div class="container">
+            <div class="admin__wrapper">
+                <h2 class="admin__title">Добавить новый курс</h2>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alert-messages">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                
+                <form class="admin__form" method="POST" enctype="multipart/form-data" action="{{ url_for('post.create') }}">
+                    <div class="form__group">
+                        <label for="name">Название курса</label>
+                        <input type="text" id="name" name="name" placeholder="Введите название курса" required>
+                    </div>
+                    
+                    <div class="form__group">
+                        <label for="bio">Описание курса</label>
+                        <textarea id="bio" name="bio" rows="4" placeholder="Краткое описание курса" required></textarea>
+                    </div>
+                    
+                    <div class="form__row">
+                        <div class="form__group">
+                            <label for="exp">Длительность (месяцев)</label>
+                            <input type="number" id="exp" name="exp" min="1" max="12" required>
+                        </div>
+                        
+                        <div class="form__group">
+                            <label for="level">Уровень сложности</label>
+                            <select id="level" name="level" required>
+                                <option value="Начинающий">Начинающий</option>
+                                <option value="Средний">Средний</option>
+                                <option value="Продвинутый">Продвинутый</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form__row">
+                        
+                        <div class="form__group">
+                            <label for="tag">Тег курса</label>
+                            <select id="tag" name="tag">
+                                <option value="">Нет тега</option>
+                                <option value="Популярный">Популярный</option>
+                                <option value="Новый">Новый</option>
+                                <option value="Бесплатно">Бесплатно</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form__group">
+                        <label for="photo">Изображение курса</label>
+                        <input type="file" id="photo" name="photo" accept="image/*" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn--primary btn--block">Добавить курс</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__inner">
+                <div class="footer__col">
+                    <a href="{{ url_for('user.index')}}" class="logo">
+                        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SkillUp">
+                    </a>
+                    <p class="footer__text">Онлайн-школа SkillUp - обучение современным профессиям с гарантией результата.</p>
+                </div>
+                <div class="footer__col">
+                    <h3 class="footer__title">Контакты</h3>
+                    <ul class="footer__contacts">
+                        <li><i class="fas fa-envelope"></i> info@skillup.ru</li>
+                        <li><i class="fas fa-phone"></i> +7 (999) 123-45-67</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>&copy; 2025 SkillUp. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

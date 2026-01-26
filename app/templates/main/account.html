@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SkillUp | Личный кабинет</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Общие стили проекта -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body class="theme-dark">
+  <!-- Шапка -->
+  <header class="header" role="banner">
+    <div class="container">
+      <div class="header__inner">
+        <a href="{{ url_for('user.index')}}" class="logo" aria-label="SkillUp — на главную">
+          <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SkillUp" />
+        </a>
+
+        <nav class="nav" aria-label="Главная навигация">
+          <ul class="nav__list">
+            <li><a href="{{ url_for('user.index')}}" class="nav__link">Главная</a></li>
+            <li><a href="{{ url_for('post.create')}}" class="nav__link">Курсы</a></li>
+            <li><a href="{{ url_for('teacher.create')}}" class="nav__link">Преподаватели</a></li>
+            <li><a href="{{ url_for('user.contacts')}}" class="nav__link">Контакты</a></li>
+            {% if current_user.is_authenticated %}
+              <li><a href="{{ url_for('user.account') }}" class="nav__link active">Личный кабинет</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+
+        <div class="header__auth">
+          {% if current_user.is_authenticated %}
+            <span class="user-greeting">{{ current_user.name }}</span>
+            <a href="{{ url_for('user.logout') }}" class="btn btn--login">Выйти</a>
+          {% else %}
+            <a href="{{ url_for('user.login')}}" class="btn btn--login">Войти</a>
+            <a href="{{ url_for('user.register')}}" class="btn btn--primary">Записаться</a>
+          {% endif %}
+        </div>
+
+        <button class="burger" id="burger" aria-label="Открыть меню" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Основной блок -->
+  <section class="account-page section" role="main" aria-labelledby="account-title" style="padding-top:120px">
+    <div class="container">
+      <div class="account__header section__header">
+        <h1 id="account-title" class="section__title">Личный кабинет</h1>
+        <p class="section__subtitle muted">Управление вашим профилем и обучением</p>
+      </div>
+
+      <div class="account__content" style="display:grid;grid-template-columns:320px 1fr;gap:22px">
+        <!-- Левая колонка: профиль/настройки -->
+        <aside class="account__info" aria-label="Профиль пользователя">
+          <div class="user-card" style="background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006)); border:1px solid rgba(255,255,255,0.03); border-radius:12px; overflow:hidden; box-shadow: var(--shadow)">
+            <div class="user-card__header" style="display:flex; align-items:center; gap:12px; padding:16px; border-bottom:1px solid rgba(255,255,255,0.05)">
+              <div class="user-avatar" style="width:64px;height:64px;border-radius:12px;overflow:hidden;flex:0 0 64px">
+                <img src="{{ url_for('static', filename='img/default-teacher.jpg') }}" alt="Аватар" style="width:100%;height:100%;object-fit:cover">
+              </div>
+              <div class="user-head">
+                <div class="user-status">
+                  {% if current_user.status == 'teacher' %}
+                    <span class="status-badge status-badge--teacher"><i class="fas fa-chalkboard-teacher"></i> Препод</span>
+                  {% elif current_user.status == 'admin' %}
+                    <span class="status-badge status-badge--admin"><i class="fas fa-shield-alt"></i> Админ</span>
+                  {% else %}
+                    <span class="status-badge status-badge--student"><i class="fas fa-user-graduate"></i> Студент</span>
+                  {% endif %}
+                </div>
+                <h2 style="margin:6px 0 0;font-size:18px">{{ current_user.name }}</h2>
+              </div>
+            </div>
+
+            <div class="user-details" style="padding:14px 16px">
+              <div class="user-meta" style="display:grid; gap:8px">
+                <div class="meta-item" style="display:flex; gap:10px; align-items:center; color:var(--muted)">
+                  <i class="fas fa-envelope"></i>
+                  <span>{{ current_user.email }}</span>
+                </div>
+                <div class="meta-item" style="display:flex; gap:10px; align-items:center; color:var(--muted)">
+                  <i class="fas fa-user"></i>
+                  <span>{{ current_user.login }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Мини-терминал статуса песочницы (декор) -->
+            <div class="terminal" aria-hidden="false" role="region" aria-label="Статус среды" style="margin:0 12px 12px">
+              <div class="terminal__header">
+                <span class="dot dot--red"></span>
+                <span class="dot dot--yellow"></span>
+                <span class="dot dot--green"></span>
+                <div class="terminal__title">sandbox@skillup: ~</div>
+              </div>
+              <pre class="terminal__body" id="account-terminal" data-lines='[
+                "Auth: {% if current_user.is_authenticated %}OK{% else %}guest{% endif %}",
+                "Role: {{ current_user.status }}",
+                "Courses: {{ current_user.courses.count() if current_user.status == "student" else 0 }}",
+                "Network isolation: ENABLED"
+              ]'></pre>
+              <div class="terminal__footer">
+                <div class="term-status"><i class="fa-solid fa-shield-halved"></i> sandbox</div>
+                <div class="term-actions">
+                  <a href="{{ url_for('post.create')}}" class="btn btn--ghost">К курсам</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="account-actions" style="display:grid; gap:10px; margin-top:12px">
+            <a href="#" class="btn btn--secondary btn--block"><i class="fas fa-cog"></i> Настройки профиля</a>
+            <a href="#" class="btn btn--secondary btn--block"><i class="fas fa-key"></i> Сменить пароль</a>
+          </div>
+
+          <!-- Быстрые метрики -->
+          <div class="quick-stats" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px">
+            <div class="card" style="background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006)); border:1px solid rgba(255,255,255,0.03); border-radius:12px; padding:12px">
+              <div class="muted" style="font-size:12px">Прогресс</div>
+              <div style="font-weight:800; color:var(--accent); font-size:18px" id="progress-percent">0%</div>
+            </div>
+            <div class="card" style="background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006)); border:1px solid rgba(255,255,255,0.03); border-radius:12px; padding:12px">
+              <div class="muted" style="font-size:12px">Бейджи</div>
+              <div style="font-weight:800; color:var(--accent-2); font-size:18px">3</div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Правая колонка: контент по роли -->
+        <div class="account__main">
+          {% if current_user.status == 'student' %}
+          <!-- Блок для студента -->
+          <div class="account-section">
+            <h2 class="section-title" style="display:flex; align-items:center; gap:10px">
+              <i class="fas fa-book-open"></i> Мои курсы
+            </h2>
+
+            {% if current_user.courses.count() > 0 %}
+              <div class="courses__grid" style="display:grid; gap:18px; grid-template-columns:repeat(3,1fr)">
+                {% for course in current_user.courses %}
+                  <div class="course__card">
+                    {% if course.photo %}
+                      <div class="course__image">
+                        <img src="{{ url_for('static', filename=course.photo) }}" alt="{{ course.name }}">
+                        {% if course.tag %}<span class="course__tag">{{ course.tag }}</span>{% endif %}
+                      </div>
+                    {% endif %}
+                    <div class="course__content">
+                      <h3 class="course__title">{{ course.name }}</h3>
+                      <p class="course__desc">{{ course.bio }}</p>
+                      <div class="course__meta">
+                        <span><i class="fas fa-clock"></i> {{ course.exp }} месяцев</span>
+                        <span><i class="fas fa-level-up-alt"></i> {{ course.level }}</span>
+                      </div>
+                      <div class="course__footer">
+                        {% if current_user.has_free_lesson(course) %}
+                          <span class="badge badge--success">Бесплатный урок доступен</span>
+                        {% endif %}
+                        <a href="{{ url_for('course.course_detail', course_id=course.id) }}" class="btn btn--primary">Продолжить</a>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="empty-state" style="text-align:center; padding:36px; border:1px dashed rgba(255,255,255,0.12); border-radius:12px">
+                <i class="fas fa-book-open empty-icon" style="font-size:28px; color:var(--muted)"></i>
+                <h3 style="margin:10px 0 6px">Вы еще не записаны на курсы</h3>
+                <p class="muted">Посмотрите наши программы обучения и начните свой путь в IT</p>
+                <a href="{{ url_for('post.create') }}" class="btn btn--primary" style="margin-top:10px">Выбрать курс</a>
+              </div>
+            {% endif %}
+          </div>
+
+          {% elif current_user.status == 'teacher' %}
+          <!-- Блок для преподавателя -->
+          <div class="account-section">
+            <h2 class="section-title" style="display:flex; align-items:center; gap:10px">
+              <i class="fas fa-chalkboard-teacher"></i> Мои курсы
+            </h2>
+
+            {% if current_user.teaching_courses.count() > 0 %}
+              <div class="courses__grid" style="display:grid; gap:18px; grid-template-columns:repeat(3,1fr)">
+                {% for course in current_user.teaching_courses %}
+                  <div class="course__card">
+                    {% if course.photo %}
+                      <div class="course__image">
+                        <img src="{{ url_for('static', filename=course.photo) }}" alt="{{ course.name }}">
+                        {% if course.tag %}<span class="course__tag">{{ course.tag }}</span>{% endif %}
+                      </div>
+                    {% endif %}
+                    <div class="course__content">
+                      <h3 class="course__title">{{ course.name }}</h3>
+                      <p class="course__desc">{{ course.bio }}</p>
+                      <div class="course__meta">
+                        <span><i class="fas fa-clock"></i> {{ course.exp }} месяцев</span>
+                        <span><i class="fas fa-level-up-alt"></i> {{ course.level }}</span>
+                      </div>
+                      <div class="course__footer">
+                        <a href="{{ url_for('course.course_detail', course_id=course.id) }}" class="btn btn--primary">Далее</a>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="empty-state" style="text-align:center; padding:36px; border:1px dashed rgba(255,255,255,0.12); border-radius:12px">
+                <i class="fas fa-chalkboard-teacher empty-icon" style="font-size:28px; color:var(--muted)"></i>
+                <h3 style="margin:10px 0 6px">Вы пока не ведете курсы</h3>
+                <p class="muted">Обратитесь к администратору для добавления курсов</p>
+              </div>
+            {% endif %}
+          </div>
+
+          {% else %}
+          <!-- Блок для администратора -->
+          <div class="account-section">
+            <h2 class="section-title" style="display:flex; align-items:center; gap:10px">
+              <i class="fas fa-tools"></i> Панель управления
+            </h2>
+
+            <div class="admin-actions" style="display:grid; gap:14px; grid-template-columns:repeat(3,1fr)">
+              <a href="{{ url_for('user.admin_users') }}" class="admin-action-card" style="text-decoration:none; color:inherit; background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006)); border:1px solid rgba(255,255,255,0.03); border-radius:12px; padding:16px; display:grid; gap:8px; transition:transform .22s, box-shadow .22s">
+                <div class="admin-action-icon" style="font-size:22px; color:var(--accent)"><i class="fas fa-users"></i></div>
+                <h3 style="margin:0">Пользователи</h3>
+                <p class="muted" style="margin:0">Управление пользователями системы</p>
+              </a>
+
+              <a href="{{ url_for('post.create')}}" class="admin-action-card" style="text-decoration:none; color:inherit; background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006)); border:1px solid rgba(255,255,255,0.03); border-radius:12px; padding:16px; display:grid; gap:8px; transition:transform .22s, box-shadow .22s">
+                <div class="admin-action-icon" style="font-size:22px; color:var(--accent)"><i class="fas fa-book"></i></div>
+                <h3 style="margin:0">Курсы</h3>
+                <p class="muted" style="margin:0">Добавление и редактирование курсов</p>
+              </a>
+
+              <a href="{{ url_for('teacher.create')}}" class="admin-action-card" style="text-decoration:none; color:inherit; background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006)); border:1px solid rgba(255,255,255,0.03); border-radius:12px; padding:16px; display:grid; gap:8px; transition:transform .22s, box-shadow .22s">
+                <div class="admin-action-icon" style="font-size:22px; color:var(--accent)"><i class="fas fa-chalkboard-teacher"></i></div>
+                <h3 style="margin:0">Преподаватели</h3>
+                <p class="muted" style="margin:0">Управление преподавателями</p>
+              </a>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Подвал -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__inner">
+        <div class="footer__col">
+          <a href="#" class="logo">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SkillUp" />
+          </a>
+          <p class="footer__text muted">Онлайн-школа SkillUp - обучение современным профессиям с гарантией результата.</p>
+        </div>
+        <div class="footer__col">
+          <h3 class="footer__title">Контакты</h3>
+          <ul class="footer__contacts">
+            <li><i class="fas fa-envelope"></i> info@skillup.ru</li>
+            <li><i class="fas fa-phone"></i> +7 (999) 123-45-67</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p>&copy; 2025 SkillUp. Все права защищены.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Твой общий скрипт -->
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+  <!-- Лёгкие анимации, без влияния на функционал -->
+  <script>
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // маленький «терминал» в карточке пользователя
+    (function(){
+      const el = document.getElementById('account-terminal');
+      if (!el || prefersReduced) return;
+      const lines = JSON.parse(el.getAttribute('data-lines') || '[]');
+      let i=0, pos=0;
+      el.textContent = '';
+      function step(){
+        if(i >= lines.length) return;
+        const line = lines[i];
+        if(pos <= line.length){
+          const prev = el.textContent.split('\n').slice(0,i).join('\n');
+          el.textContent = (i?prev+'\n':'') + line.slice(0,pos) + (pos%2?'▌':'');
+          pos++;
+          setTimeout(step, 26 + Math.random()*34);
+        } else {
+          pos = 0; i++; setTimeout(step, 260);
+        }
+      }
+      step();
+    })();
+
+    // простая анимация счётчика прогресса (демо)
+    (function(){
+      const el = document.getElementById('progress-percent');
+      if(!el || prefersReduced) return;
+      const target = 72; // можно подставлять реальный %
+      const start = performance.now(), dur = 1200;
+      function frame(now){
+        const p = Math.min(1, (now - start)/dur);
+        el.textContent = Math.floor(p * target) + '%';
+        if(p < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    })();
+
+    // tilt-эффект карточек курсов
+    (function(){
+      if (prefersReduced) return;
+      const cards = document.querySelectorAll('.course__card');
+      cards.forEach(card=>{
+        card.addEventListener('pointermove', (e)=>{
+          const r = card.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width;
+          const py = (e.clientY - r.top) / r.height;
+          const rx = (py - 0.5) * 6;
+          const ry = (px - 0.5) * -8;
+          card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.02)`;
+          card.style.setProperty('--glowOpacity', '1');
+        });
+        card.addEventListener('pointerleave', ()=>{
+          card.style.transform = '';
+          card.style.setProperty('--glowOpacity', '0');
+        });
+      });
+    })();
+
+    // бургер (если не перехватывается твоим script.js)
+    (function(){
+      const burger = document.getElementById('burger');
+      const nav = document.querySelector('.nav');
+      if(!burger || !nav) return;
+      burger.addEventListener('click', ()=>{
+        const open = burger.getAttribute('aria-expanded') === 'true';
+        burger.setAttribute('aria-expanded', String(!open));
+        nav.classList.toggle('nav--open');
+      });
+    })();
+  </script>
+</body>
+</html>

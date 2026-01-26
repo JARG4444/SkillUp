@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ course.name }} | SkillUp</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root{
+      --bg:#071021; --bg2:#050816; --panel:#0b1220; --card:#0e1722;
+      --text:#e6eef8; --muted:#9fb3c8; --accent:#00ffcc; --accent2:#6C5CE7;
+      --ok:#7ef0b0; --err:#ff6b6b; --warn:#ffd76b;
+      --glass:rgba(255,255,255,.04); --glass2:rgba(255,255,255,.02);
+      --radius:14px; --shadow:0 18px 40px rgba(2,6,23,.6);
+      --bd:1px solid rgba(255,255,255,.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text); font-family:"Inter",system-ui;
+      background:linear-gradient(180deg,var(--bg) 0%, var(--bg2) 100%);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .container{max-width:1140px; margin:0 auto; padding:24px}
+
+    /* HERO */
+    .hero{padding:110px 0 28px}
+    .hero .container{display:grid; grid-template-columns: 1.2fr .8fr; gap:22px; align-items:center}
+    .hero__title{margin:0 0 8px; font-size:28px; letter-spacing:-.01em}
+    .hero__desc{margin:0 0 10px; color:var(--muted)}
+    .hero__meta{display:flex; gap:12px; flex-wrap:wrap; color:var(--muted); font-size:13px}
+    .pill{display:inline-flex; gap:8px; align-items:center; padding:6px 10px; border-radius:999px;
+      color:var(--accent); font-weight:800; border:1px solid rgba(0,255,204,.18);
+      background:linear-gradient(90deg,rgba(0,255,204,.08),rgba(108,92,231,.06)); }
+    .hero__card{
+      background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,.006));
+      border:var(--bd); border-radius:12px; padding:16px; box-shadow:var(--shadow)
+    }
+    .hero__stat{display:grid; grid-template-columns:auto 1fr; gap:10px; align-items:center; margin-top:10px}
+    .hero__price{font-size:22px; font-weight:800; color:var(--accent); margin-top:10px}
+    .hero__actions{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px; cursor:pointer;
+      border:1px solid rgba(0,255,204,.18); color:var(--accent);
+      background:linear-gradient(90deg,rgba(0,255,204,.08),rgba(108,92,231,.06));
+      font-weight:800; text-decoration:none; transition:transform .12s, box-shadow .2s;
+      font-size:14px;
+    }
+    .btn:hover{box-shadow:0 6px 22px rgba(0,255,204,.08)}
+    .btn--ghost{border:1px solid rgba(255,255,255,.08); background:transparent; color:var(--muted)}
+    .btn--danger{border-color:rgba(255,107,107,.35); color:#ffd1d1; background:linear-gradient(90deg,rgba(255,107,107,.08),rgba(255,255,255,.02))}
+    .btn--small{padding:6px 10px; border-radius:10px; font-size:12px}
+
+    /* FLASH */
+    .flash{margin:14px 0; display:grid; gap:8px}
+    .flash__item{padding:10px 12px; border-radius:10px; border:var(--bd);
+      background:linear-gradient(90deg, rgba(0,255,204,.05), rgba(108,92,231,.04))}
+    .flash__item--error{background:linear-gradient(90deg, rgba(255,107,107,.08), rgba(255,255,255,.02)); border-color:rgba(255,107,107,.35)}
+    .flash__item--success{background:linear-gradient(90deg, rgba(126,240,176,.08), rgba(255,255,255,.02)); border-color:rgba(126,240,176,.35)}
+
+    /* LAYOUT: админ-панель + структура */
+    .layout{padding:10px 0 64px}
+    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:22px}
+    .panel{
+      background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,.006));
+      border:var(--bd); border-radius:12px; box-shadow:var(--shadow); overflow:hidden;
+    }
+    .panel__head{padding:14px 16px; border-bottom:var(--bd); display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .panel__title{margin:0; font-size:16px}
+    .panel__body{padding:16px}
+
+    /* инструменты */
+    .tool{border:var(--bd); border-radius:12px; padding:12px; margin-bottom:12px;
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01))}
+    .tool__title{margin:0 0 8px; color:var(--muted); font-size:13px}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    .input, .select, .textarea{
+      width:100%; min-width:200px; flex:1; font-size:14px; color:var(--text);
+      background:rgba(255,255,255,.03); border:var(--bd); border-radius:10px; padding:9px 11px;
+    }
+    .textarea{min-height:80px; font-family:inherit; line-height:1.4}
+    .input:focus, .select:focus, .textarea:focus{
+      outline:none; border-color:rgba(0,255,204,.28); box-shadow:0 0 0 4px rgba(0,255,204,.08)
+    }
+
+    /* модули / уроки */
+    .modules{display:grid; gap:12px}
+    .mod{border:var(--bd); border-radius:12px; overflow:hidden; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01))}
+    .mod__head{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:14px 16px; border-bottom:var(--bd)}
+    .mod__title{margin:0; font-size:16px}
+    .mod__desc{margin:6px 0 0; color:var(--muted); font-size:13px}
+    .mod__actions{display:flex; gap:8px; align-items:center}
+    .mod__body{padding:12px 16px 16px; display:grid; gap:12px}
+
+    .edit-box{border:var(--bd); border-radius:10px; padding:10px; background:rgba(255,255,255,.02)}
+    .edit-box .row{margin-top:8px}
+
+    .lessons{display:grid; gap:10px}
+    .lesson{
+      display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center;
+      padding:10px 12px; border-radius:10px; border:var(--bd);
+      background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,.006));
+    }
+    .badge{
+      padding:5px 8px; border-radius:999px; font-weight:800; font-size:12px;
+      border:1px solid rgba(255,255,255,.14); color:#fff; background:rgba(0,0,0,.25);
+      backdrop-filter:blur(4px);
+    }
+    .b-lecture{color:#9fe2ff; border-color:rgba(159,226,255,.35)}
+    .b-test{color:#ffd76b; border-color:rgba(255,215,107,.35)}
+    .b-lab{color:#7ef0b0; border-color:rgba(126,240,176,.35)}
+    .lesson__title{margin:0}
+    .lesson__meta{color:var(--muted); font-size:12px}
+    .lesson__actions{display:flex; gap:6px}
+
+    /* MODAL */
+    .modal-backdrop{
+      position:fixed; inset:0; background:rgba(0,0,0,.7);
+      display:none; align-items:center; justify-content:center; z-index:40;
+    }
+    .modal-backdrop.active{display:flex}
+    .modal{
+      width:min(960px, 100% - 32px);
+      max-height:90vh; overflow:auto;
+      background:#050816; border-radius:16px; border:var(--bd);
+      box-shadow:0 22px 60px rgba(0,0,0,.9); padding:18px 18px 20px;
+    }
+    .modal__head{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px}
+    .modal__title{margin:0; font-size:17px}
+    .modal__close{border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:18px}
+    .modal .textarea{min-height:180px;font-family:monospace;white-space:pre-wrap}
+
+    @media (max-width: 960px){
+      .hero .container{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div>
+        <div class="pill"><i class="fa-solid fa-shield-halved"></i> SkillUp Cyber-Track</div>
+        <h1 class="hero__title">{{ course.name }}</h1>
+        <p class="hero__desc">{{ course.bio }}</p>
+
+        <div class="hero__meta">
+          <span><i class="fa-regular fa-clock"></i> {{ course.exp }} мес</span>
+          <span>•</span>
+          <span><i class="fa-solid fa-signal"></i> {{ course.level }}</span>
+        </div>
+
+        <div style="margin-top:12px">
+          <a class="btn btn--ghost" href="{{ url_for('user.account') }}">
+            <i class="fa-solid fa-arrow-left"></i> Назад
+          </a>
+        </div>
+      </div>
+
+      <div class="hero__card">
+        <div class="hero__stat">
+          <i class="fa-solid fa-user-graduate" style="opacity:.8"></i>
+          <div class="hero__price">
+            {% if course.tag == 'Бесплатно' or course.price == '0' %}0 ₽
+            {% else %}{{ course.price }} ₽
+            {% endif %}
+          </div>
+        </div>
+
+        {% if current_user.status == 'student' %}
+          <div class="hero__actions">
+            <form action="{{ url_for('post.enroll', id=course.id) }}" method="POST">
+              <button type="submit" class="btn"><i class="fa-solid fa-plus"></i> Записаться</button>
+            </form>
+            <form action="{{ url_for('post.free_lesson', id=course.id) }}" method="POST">
+              <button type="submit" class="btn btn--ghost"><i class="fa-regular fa-circle-play"></i> Бесплатный урок</button>
+            </form>
+          </div>
+        {% elif current_user.status == 'teacher' %}
+          <div class="hero__actions">
+            <span style="font-size:13px;color:var(--muted);">Режим преподавателя: структура и редактирование курса ниже.</span>
+          </div>
+        {% elif current_user.status == 'admin' %}
+          <div class="hero__actions">
+            <a href="{{ url_for('post.edit', id=course.id) }}" class="btn"><i class="fa-solid fa-pen-to-square"></i> Редактировать карточку курса</a>
+            <form action="{{ url_for('post.delete', id=course.id) }}" method="POST" onsubmit="return confirm('Удалить курс «{{ course.name }}»?')">
+              <button type="submit" class="btn btn--danger"><i class="fa-regular fa-trash-can"></i> Удалить курс</button>
+            </form>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <section class="layout">
+    <div class="container">
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash">
+          {% for cat, msg in messages %}
+            <div class="flash__item {% if cat in ['error','danger'] %}flash__item--error{% elif cat in ['success','ok'] %}flash__item--success{% endif %}">
+              <strong style="text-transform:capitalize">{{ cat }}</strong>: {{ msg }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% endwith %}
+
+      <div class="grid">
+
+        {% if current_user.status in ['teacher','admin'] %}
+        <!-- ПАНЕЛЬ УПРАВЛЕНИЯ КУРСОМ -->
+        <div class="panel">
+          <div class="panel__head">
+            <h3 class="panel__title"><i class="fa-solid fa-toolbox"></i> Управление курсом</h3>
+
+            {% if current_user.status == 'teacher' %}
+            <a href="{{ url_for('course.course_students', course_id=course.id) }}"
+              class="btn btn--ghost btn--small">
+              <i class="fa-solid fa-users"></i> Студенты курса
+            </a>
+            {% endif %}
+          </div>
+          <div class="panel__body">
+
+            <!-- Добавить модуль -->
+            <div class="tool">
+              <p class="tool__title">Добавить модуль</p>
+              <form method="post" action="{{ url_for('course.course_admin', course_id=course.id) }}">
+                <input type="hidden" name="action" value="add_module">
+                <div class="row">
+                  <input class="input" type="text" name="title" placeholder="Название модуля" required>
+                </div>
+                <div class="row" style="margin-top:8px">
+                  <textarea class="textarea" name="description" placeholder="Описание (опционально)"></textarea>
+                </div>
+                <div class="row" style="margin-top:8px; justify-content:flex-end">
+                  <button type="submit" class="btn"><i class="fa-solid fa-plus"></i> Добавить</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Добавить лекцию -->
+            <div class="tool">
+              <p class="tool__title">Добавить лекцию</p>
+              <form method="post" action="{{ url_for('course.course_admin', course_id=course.id) }}">
+                <input type="hidden" name="action" value="add_lecture">
+                <div class="row">
+                  <select name="module_id" class="select" required>
+                    {% for m in course.modules %}
+                      <option value="{{ m.id }}">{{ m.title }}</option>
+                    {% endfor %}
+                  </select>
+                  <input class="input" type="text" name="title" placeholder="Название лекции" required>
+                </div>
+                <div class="row" style="margin-top:8px">
+                  <input class="input" type="url" name="video_url" placeholder="Видео URL (опционально)">
+                </div>
+                <div class="row" style="margin-top:8px">
+                  <textarea class="textarea" name="html_content" placeholder="HTML контент лекции (опционально)"></textarea>
+                </div>
+                <div class="row" style="margin-top:8px; justify-content:flex-end">
+                  <button type="submit" class="btn"><i class="fa-solid fa-file-lines"></i> Добавить</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Добавить тест -->
+            <div class="tool">
+              <p class="tool__title">Добавить тест</p>
+              <form method="post" action="{{ url_for('course.course_admin', course_id=course.id) }}">
+                <input type="hidden" name="action" value="add_test">
+                <div class="row">
+                  <select name="module_id" class="select" required>
+                    {% for m in course.modules %}
+                      <option value="{{ m.id }}">{{ m.title }}</option>
+                    {% endfor %}
+                  </select>
+                  <input class="input" type="text" name="title" placeholder="Название теста" required>
+                </div>
+                <div class="row" style="margin-top:8px; justify-content:flex-end">
+                  <button type="submit" class="btn"><i class="fa-solid fa-square-poll-vertical"></i> Добавить</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Добавить лабораторную -->
+            <div class="tool">
+              <p class="tool__title">Добавить лабораторную</p>
+              <form method="post" action="{{ url_for('course.course_admin', course_id=course.id) }}">
+                <input type="hidden" name="action" value="add_lab">
+                <div class="row">
+                  <select name="module_id" class="select" required>
+                    {% for m in course.modules %}
+                      <option value="{{ m.id }}">{{ m.title }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="row" style="margin-top:8px">
+                  <input class="input" type="text" name="title" placeholder="Название лабораторной" required>
+                  <input class="input" type="text" name="sandbox_slug" placeholder="sandbox slug" required>
+                </div>
+                <div class="row" style="margin-top:8px; justify-content:flex-end">
+                  <button type="submit" class="btn"><i class="fa-solid fa-flask-vial"></i> Добавить</button>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- СТРУКТУРА КУРСА -->
+        <div class="panel">
+          <div class="panel__head">
+            <h3 class="panel__title">
+              <i class="fa-regular fa-folder-open"></i>
+              Структура курса
+            </h3>
+          </div>
+          <div class="panel__body">
+            {% if course.modules %}
+              <div class="modules">
+                {% for module in course.modules %}
+                <div class="mod">
+                  <div class="mod__head">
+                    <div>
+                      <h4 class="mod__title">{{ module.title }}</h4>
+                      {% if module.description %}
+                        <p class="mod__desc">{{ module.description }}</p>
+                      {% endif %}
+                    </div>
+
+                    {% if current_user.status in ['teacher','admin'] %}
+                    <div class="mod__actions">
+                      <form method="post"
+                            action="{{ url_for('course.course_admin', course_id=course.id) }}"
+                            onsubmit="return confirm('Удалить модуль и все его уроки?')">
+                        <input type="hidden" name="action" value="delete_module">
+                        <input type="hidden" name="module_id" value="{{ module.id }}">
+                        <button class="btn btn--danger btn--small" type="submit">
+                          <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                      </form>
+                    </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="mod__body">
+
+                    {% if current_user.status in ['teacher','admin'] %}
+                    <!-- inline-редактирование модуля -->
+                    <div class="edit-box">
+                      <form method="post" action="{{ url_for('course.course_admin', course_id=course.id) }}">
+                        <input type="hidden" name="action" value="edit_module">
+                        <input type="hidden" name="module_id" value="{{ module.id }}">
+                        <div class="row">
+                          <input class="input" type="text" name="title" value="{{ module.title }}" placeholder="Название">
+                        </div>
+                        <div class="row" style="margin-top:8px">
+                          <textarea class="textarea" name="description" placeholder="Описание">{{ module.description }}</textarea>
+                        </div>
+                        <div class="row" style="margin-top:8px; justify-content:flex-end">
+                          <button class="btn btn--ghost btn--small" type="submit">
+                            <i class="fa-regular fa-floppy-disk"></i> Обновить модуль
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                    {% endif %}
+
+                    {% if module.lessons %}
+                    <div class="lessons">
+                      {% for lesson in module.lessons %}
+                      <div class="lesson">
+                        <span class="badge
+                          {% if lesson.lesson_type == 'lecture' %} b-lecture
+                          {% elif lesson.lesson_type == 'test' %} b-test
+                          {% else %} b-lab {% endif %}">
+                          {% if lesson.lesson_type == 'lecture' %}Лекция
+                          {% elif lesson.lesson_type == 'test' %}Тест
+                          {% else %}Лаба{% endif %}
+                        </span>
+
+                        <div>
+                          <a href="{{ url_for('course.lesson_detail', course_id=course.id, lesson_id=lesson.id) }}" class="lesson__title">
+                            {{ lesson.title }}
+                          </a>
+                          {% if current_user.status == 'student' %}
+                            <div class="lesson__meta">
+                              {% if lesson.lesson_type == 'lecture' %}<i class="fa-regular fa-circle-play"></i> Теория
+                              {% elif lesson.lesson_type == 'test' %}<i class="fa-regular fa-circle-check"></i> Контроль знаний
+                              {% else %}<i class="fa-solid fa-flask-vial"></i> Практическая лаба{% endif %}
+                            </div>
+                          {% endif %}
+                        </div>
+
+                        <div class="lesson__actions">
+                          {% if current_user.status in ['teacher','admin'] %}
+                          <!-- открыть модалку редактирования -->
+                          <button type="button"
+                                  class="btn btn--ghost btn--small js-edit-lesson"
+                                  data-modal-id="modal-lesson-{{ lesson.id }}">
+                            <i class="fa-solid fa-pen"></i>
+                          </button>
+
+                          <!-- удалить урок -->
+                          <form method="post"
+                                action="{{ url_for('course.course_admin', course_id=course.id) }}"
+                                style="display:inline"
+                                onsubmit="return confirm('Удалить урок «{{ lesson.title }}»?')">
+                            <input type="hidden" name="action" value="delete_lesson">
+                            <input type="hidden" name="lesson_id" value="{{ lesson.id }}">
+                            <button class="btn btn--danger btn--small" type="submit">
+                              <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                          </form>
+                          {% else %}
+                          <span class="lesson__meta">
+                            {% if lesson.lesson_type == 'lecture' %}<i class="fa-regular fa-circle-play"></i>
+                            {% elif lesson.lesson_type == 'test' %}<i class="fa-regular fa-circle-check"></i>
+                            {% else %}<i class="fa-solid fa-flask-vial"></i>{% endif %}
+                          </span>
+                          {% endif %}
+                        </div>
+                      </div>
+
+                      {% if current_user.status in ['teacher','admin'] %}
+                      <!-- МОДАЛКА РЕДАКТИРОВАНИЯ КОНКРЕТНОГО УРОКА -->
+                      <div class="modal-backdrop" id="modal-lesson-{{ lesson.id }}">
+                        <div class="modal">
+                          <div class="modal__head">
+                            <h2 class="modal__title">
+                              Редактирование:
+                              {{ lesson.title }}
+                              <span style="font-size:12px; opacity:.7;">
+                                {% if lesson.lesson_type == 'lecture' %}Лекция{% elif lesson.lesson_type == 'test' %}Тест{% else %}Лаба{% endif %}
+                              </span>
+                            </h2>
+                            <button type="button" class="modal__close" data-modal-close="modal-lesson-{{ lesson.id }}">
+                              <i class="fa-solid fa-xmark"></i>
+                            </button>
+                          </div>
+
+                          <form method="POST"
+                                action="{{ url_for('course.edit_lesson', course_id=course.id, lesson_id=lesson.id) }}">
+                            <div class="row">
+                              <div class="form-group" style="flex:1">
+                                <label for="title-{{ lesson.id }}" style="font-size:13px;margin-bottom:4px;display:block;">Название урока</label>
+                                <input id="title-{{ lesson.id }}" name="title" class="input" type="text" value="{{ lesson.title }}">
+                              </div>
+                            </div>
+
+                            {% if lesson.lesson_type == 'lecture' or lesson.lesson_type == 'lab' %}
+                            <div class="row" style="margin-top:10px">
+                              <div style="flex:1">
+                                <label style="font-size:13px;margin-bottom:4px;display:block;">Контент (HTML)</label>
+                                <textarea name="html_content" class="textarea">{% if lesson.html_content %}{{ lesson.html_content|e }}{% endif %}</textarea>
+                                <div style="font-size:12px;color:var(--muted);margin-top:4px;">
+                                  Можно использовать теги &lt;h2&gt;, &lt;p&gt;, &lt;code&gt;, &lt;img&gt;, &lt;table&gt; и т.д.
+                                </div>
+                              </div>
+                            </div>
+                            {% endif %}
+
+                            {% if lesson.lesson_type == 'lecture' %}
+                            <div class="row" style="margin-top:10px">
+                              <div style="flex:1">
+                                <label style="font-size:13px;margin-bottom:4px;display:block;">Видео URL (опционально)</label>
+                                <input name="video_url" class="input" type="url"
+                                       value="{{ lesson.video_url or '' }}"
+                                       placeholder="https://www.youtube.com/embed/...">
+                              </div>
+                            </div>
+                            {% endif %}
+
+                            {% if lesson.lesson_type == 'lab' %}
+                            <div class="row" style="margin-top:10px">
+                              <div style="flex:1">
+                                <label style="font-size:13px;margin-bottom:4px;display:block;">Slug песочницы</label>
+                                <input name="sandbox_slug" class="input" type="text"
+                                       value="{{ lesson.sandbox_slug or '' }}"
+                                       placeholder="например, fakebank">
+                              </div>
+                            </div>
+                            {% endif %}
+
+                            {% if lesson.lesson_type == 'test' and lesson.test %}
+                            <div class="row" style="margin-top:10px">
+                              <div style="flex:1">
+                                <label style="font-size:13px;margin-bottom:4px;display:block;">Название теста</label>
+                                <input name="test_title" class="input" type="text" value="{{ lesson.test.title }}">
+                              </div>
+                            </div>
+                            <div class="row" style="margin-top:10px">
+                              <div style="flex:1">
+                                <label style="font-size:13px;margin-bottom:4px;display:block;">Описание теста</label>
+                                <textarea name="test_description" class="textarea">{% if lesson.test.description %}{{ lesson.test.description }}{% endif %}</textarea>
+                              </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="row" style="margin-top:14px; justify-content:flex-end">
+                              <button type="button" class="btn btn--ghost btn--small" data-modal-close="modal-lesson-{{ lesson.id }}">
+                                Отмена
+                              </button>
+                              <button type="submit" class="btn btn--small">
+                                <i class="fa-regular fa-floppy-disk"></i> Сохранить
+                              </button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                      {% endif %}
+
+                      {% endfor %}
+                    </div>
+                    {% else %}
+                      <div class="lesson" style="grid-template-columns:1fr;justify-items:center">
+                        <span class="lesson__meta">В этом модуле пока нет уроков</span>
+                      </div>
+                    {% endif %}
+
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <p class="lesson__meta">Пока нет модулей. Добавьте первый модуль в панели управления.</p>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Открытие/закрытие модалок редактирования уроков
+    document.addEventListener('click', function (e) {
+      const openBtn = e.target.closest('.js-edit-lesson');
+      if (openBtn) {
+        const id = openBtn.dataset.modalId;
+        const modal = document.getElementById(id);
+        if (modal) modal.classList.add('active');
+      }
+
+      const closeBtn = e.target.closest('[data-modal-close]');
+      if (closeBtn) {
+        const id = closeBtn.getAttribute('data-modal-close');
+        const modal = document.getElementById(id);
+        if (modal) modal.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>

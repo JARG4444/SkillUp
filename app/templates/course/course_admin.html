@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Администрирование курса: {{ course.name }}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root{
+      --bg:#071021; --bg2:#050816; --panel:#0b1220; --card:#0e1722;
+      --text:#e6eef8; --muted:#9fb3c8; --accent:#00ffcc; --accent2:#6C5CE7;
+      --ok:#7ef0b0; --err:#ff6b6b; --warn:#ffd76b;
+      --bd:1px solid rgba(255,255,255,.06);
+      --glass:rgba(255,255,255,.04);
+      --shadow:0 18px 40px rgba(2,6,23,.6);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text); font-family:"Inter",system-ui;
+      background:linear-gradient(180deg,var(--bg) 0%, var(--bg2) 100%);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .container{max-width:1140px; margin:0 auto; padding:24px}
+
+    /* HEADER */
+    .page-head{padding:110px 0 18px}
+    .title{margin:0 0 6px; font-size:26px; letter-spacing:-.01em}
+    .breadcrumbs{color:var(--muted); display:flex; gap:10px; align-items:center}
+    .breadcrumbs a{color:var(--muted)}
+    .breadcrumbs i{opacity:.7}
+
+    /* FLASH */
+    .flash{margin:14px 0; display:grid; gap:8px}
+    .flash__item{padding:10px 12px; border-radius:10px; border:var(--bd);
+      background:linear-gradient(90deg, rgba(0,255,204,.05), rgba(108,92,231,.04))}
+    .flash__item--error{background:linear-gradient(90deg, rgba(255,107,107,.08), rgba(255,255,255,.02)); border-color:rgba(255,107,107,.35)}
+    .flash__item--success{background:linear-gradient(90deg, rgba(126,240,176,.08), rgba(255,255,255,.02)); border-color:rgba(126,240,176,.35)}
+
+    /* LAYOUT */
+    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:22px; padding:14px 0 60px}
+    .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,.015), rgba(255,255,255,.006));
+      border:var(--bd); border-radius:12px; box-shadow:var(--shadow); overflow:hidden;
+    }
+    .panel__head{padding:14px 16px; border-bottom:var(--bd); display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .panel__title{margin:0; font-size:16px}
+    .panel__body{padding:16px}
+
+    /* FORMS */
+    .tool{border:var(--bd); border-radius:12px; padding:12px; margin-bottom:12px;
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01))}
+    .tool__title{margin:0 0 8px; color:var(--muted); font-size:13px}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    .input, .select, .textarea{
+      width:100%; min-width:220px; flex:1; font-size:14px; color:var(--text);
+      background:rgba(255,255,255,.03); border:var(--bd); border-radius:10px; padding:10px 12px;
+    }
+    .textarea{min-height:110px; font-family:inherit; line-height:1.4}
+    .input:focus, .select:focus, .textarea:focus{outline:none; border-color:rgba(0,255,204,.28); box-shadow:0 0 0 4px rgba(0,255,204,.08)}
+
+    .btn{
+      display:inline-flex; gap:8px; align-items:center; padding:10px 14px; border-radius:12px; cursor:pointer;
+      border:1px solid rgba(0,255,204,.18); color:var(--accent);
+      background:linear-gradient(90deg, rgba(0,255,204,.08), rgba(108,92,231,.06));
+      font-weight:800; text-decoration:none; transition:transform .12s, box-shadow .2s;
+    }
+    .btn:hover{box-shadow:0 6px 22px rgba(0,255,204,.08)}
+    .btn--ghost{border:1px solid rgba(255,255,255,.08); background:transparent; color:var(--muted)}
+    .btn--danger{border-color:rgba(255,107,107,.35); color:#ffd1d1; background:linear-gradient(90deg, rgba(255,107,107,.08), rgba(255,255,255,.02))}
+    .btn--small{padding:7px 10px; border-radius:10px; font-size:13px}
+
+    /* MODULES LIST */
+    .modules{display:grid; gap:12px}
+    .mod{border:var(--bd); border-radius:12px; overflow:hidden; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01))}
+    .mod__head{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:14px 16px; border-bottom:var(--bd)}
+    .mod__title{margin:0; font-size:16px}
+    .mod__desc{margin:6px 0 0; color:var(--muted); font-size:13px}
+    .mod__actions{display:flex; gap:8px; align-items:center}
+    .mod__body{padding:12px 16px 16px; display:grid; gap:12px}
+
+    /* inline edit panel */
+    .edit-box{border:var(--bd); border-radius:10px; padding:10px; background:rgba(255,255,255,.02)}
+    .edit-box .row{margin-top:8px}
+
+    /* lessons */
+    .lessons{display:grid; gap:10px}
+    .lesson{
+      display:grid; grid-template-columns: auto 1fr auto; align-items:center; gap:10px;
+      border:var(--bd); border-radius:10px; padding:10px 12px;
+      background:linear-gradient(180deg, rgba(255,255,255,.015), rgba(255,255,255,.006));
+    }
+    .badge{
+      padding:5px 8px; border-radius:999px; font-weight:800; font-size:12px;
+      border:1px solid rgba(255,255,255,.14); color:#fff; background:rgba(0,0,0,.25);
+      backdrop-filter:blur(4px);
+    }
+    .b-lecture{color:#9fe2ff; border-color:rgba(159,226,255,.35)}
+    .b-test{color:#ffd76b; border-color:rgba(255,215,107,.35)}
+    .b-lab{color:#7ef0b0; border-color:rgba(126,240,176,.35)}
+    .lesson__title{margin:0}
+    .lesson__actions{display:flex; gap:8px}
+
+    /* responsive */
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+
+  <section class="page-head">
+    <div class="container">
+      <div class="breadcrumbs">
+        <a href="{{ url_for('course.course_detail', course_id=course.id) }}"><i class="fa-solid fa-arrow-left"></i> Назад к курсу</a>
+        <span>•</span>
+        <span>Администрирование</span>
+      </div>
+      <h1 class="title">Курс: {{ course.name }}</h1>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash">
+          {% for cat, msg in messages %}
+            <div class="flash__item {% if cat in ['error','danger'] %}flash__item--error{% elif cat in ['success','ok'] %}flash__item--success{% endif %}">
+              <strong style="text-transform:capitalize">{{ cat }}</strong>: {{ msg }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% endwith %}
+    </div>
+  </section>
+
+  <section>
+    <div class="container grid">
+
+      <!-- Панель добавления сущностей -->
+      <div class="panel">
+        <div class="panel__head">
+          <h3 class="panel__title"><i class="fa-solid fa-toolbox"></i> Добавление контента</h3>
+        </div>
+        <div class="panel__body">
+
+          <!-- Добавить модуль -->
+          <div class="tool">
+            <p class="tool__title">Добавить модуль</p>
+            <form method="post">
+              <input type="hidden" name="action" value="add_module">
+              <div class="row">
+                <input class="input" type="text" name="title" placeholder="Название модуля" required>
+                <button class="btn" type="submit"><i class="fa-solid fa-plus"></i> Добавить</button>
+              </div>
+              <div class="row" style="margin-top:10px">
+                <textarea class="textarea" name="description" placeholder="Описание (опционально)"></textarea>
+              </div>
+            </form>
+          </div>
+
+          <!-- Добавить лекцию -->
+          <div class="tool">
+            <p class="tool__title">Добавить лекцию</p>
+            <form method="post">
+              <input type="hidden" name="action" value="add_lecture">
+              <div class="row">
+                <select class="select" name="module_id" required>
+                  {% for m in course.modules %}<option value="{{ m.id }}">{{ m.title }}</option>{% endfor %}
+                </select>
+                <input class="input" type="text" name="title" placeholder="Название лекции" required>
+                <button class="btn" type="submit"><i class="fa-regular fa-file-lines"></i> Добавить</button>
+              </div>
+              <div class="row" style="margin-top:10px">
+                <input class="input" type="url" name="video_url" placeholder="Видео URL (опционально)">
+              </div>
+              <div class="row" style="margin-top:10px">
+                <textarea class="textarea" name="html_content" placeholder="HTML контент лекции (опционально)"></textarea>
+              </div>
+            </form>
+          </div>
+
+          <!-- Добавить тест -->
+          <div class="tool">
+            <p class="tool__title">Добавить тест</p>
+            <form method="post">
+              <input type="hidden" name="action" value="add_test">
+              <div class="row">
+                <select class="select" name="module_id" required>
+                  {% for m in course.modules %}<option value="{{ m.id }}">{{ m.title }}</option>{% endfor %}
+                </select>
+                <input class="input" type="text" name="title" placeholder="Название теста" required>
+                <button class="btn" type="submit"><i class="fa-solid fa-square-poll-vertical"></i> Добавить</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Добавить лабораторную -->
+          <div class="tool">
+            <p class="tool__title">Добавить лабораторную</p>
+            <form method="post">
+              <input type="hidden" name="action" value="add_lab">
+              <div class="row">
+                <select class="select" name="module_id" required>
+                  {% for m in course.modules %}<option value="{{ m.id }}">{{ m.title }}</option>{% endfor %}
+                </select>
+                <input class="input" type="text" name="title" placeholder="Название лабораторной" required>
+                <input class="input" type="text" name="sandbox_slug" placeholder="sandbox slug" required>
+                <button class="btn" type="submit"><i class="fa-solid fa-flask-vial"></i> Добавить</button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Модули, редактирование и уроки -->
+      <div class="panel">
+        <div class="panel__head">
+          <h3 class="panel__title"><i class="fa-regular fa-folder-open"></i> Модули курса</h3>
+        </div>
+        <div class="lesson-header">
+            <h4>
+                <i class="fas {% if lesson.lesson_type.value == 'test' %}fa-question-circle{% elif lesson.lesson_type.value == 'lab' %}fa-flask{% else %}fa-book-open{% endif %}"></i>
+                {{ lesson.title }}
+            </h4>
+
+            <div class="lesson-actions">
+                <a href="{{ url_for('course.edit_lesson', course_id=course.id, lesson_id=lesson.id) }}"
+                  class="btn btn--secondary btn--small">
+                    <i class="fas fa-pen"></i> Редактировать
+                </a>
+
+                <form method="POST" style="display:inline"
+                      onsubmit="return confirm('Удалить урок?');">
+                    <input type="hidden" name="action" value="delete_lesson">
+                    <input type="hidden" name="lesson_id" value="{{ lesson.id }}">
+                    <button type="submit" class="btn btn--danger btn--small">
+                        <i class="fas fa-trash"></i> Удалить
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="panel__body">
+          {% if course.modules %}
+          <div class="modules">
+            {% for module in course.modules %}
+            <div class="mod">
+              <div class="mod__head">
+                <div>
+                  <h4 class="mod__title">{{ module.title }}</h4>
+                  {% if module.description %}<p class="mod__desc">{{ module.description }}</p>{% endif %}
+                </div>
+                <div class="mod__actions">
+                  <!-- удалить модуль -->
+                  <form method="post" onsubmit="return confirm('Удалить модуль?')">
+                    <input type="hidden" name="action" value="delete_module">
+                    <input type="hidden" name="module_id" value="{{ module.id }}">
+                    <button class="btn btn--danger btn--small" type="submit"><i class="fa-regular fa-trash-can"></i></button>
+                  </form>
+                </div>
+              </div>
+
+              <div class="mod__body">
+                <!-- inline edit -->
+                <div class="edit-box">
+                  <form method="post">
+                    <input type="hidden" name="action" value="edit_module">
+                    <input type="hidden" name="module_id" value="{{ module.id }}">
+                    <div class="row">
+                      <input class="input" type="text" name="title" value="{{ module.title }}" placeholder="Название">
+                    </div>
+                    <div class="row" style="margin-top:8px">
+                      <textarea class="textarea" name="description" placeholder="Описание">{{ module.description }}</textarea>
+                    </div>
+                    <div class="row" style="margin-top:8px">
+                      <button class="btn btn--ghost btn--small" type="submit"><i class="fa-regular fa-floppy-disk"></i> Обновить</button>
+                    </div>
+                  </form>
+                </div>
+
+                <!-- lessons -->
+                {% if module.lessons %}
+                <div class="lessons">
+                  {% for lesson in module.lessons %}
+                  <div class="lesson">
+                    <span class="badge
+                      {% if lesson.lesson_type == 'lecture' %} b-lecture
+                      {% elif lesson.lesson_type == 'test' %} b-test
+                      {% else %} b-lab {% endif %}">
+                      {% if lesson.lesson_type == 'lecture' %}Лекция{% elif lesson.lesson_type == 'test' %}Тест{% else %}Лаба{% endif %}
+                    </span>
+                    <p class="lesson__title">{{ lesson.title }}</p>
+                    <div class="lesson__actions">
+                      <a class="btn btn--ghost btn--small" href="{{ url_for('course.lesson_detail', course_id=course.id, lesson_id=lesson.id) }}">
+                        <i class="fa-regular fa-eye"></i>
+                      </a>
+                      <form method="post" style="display:inline" onsubmit="return confirm('Удалить урок?')">
+                        <input type="hidden" name="action" value="delete_lesson">
+                        <input type="hidden" name="lesson_id" value="{{ lesson.id }}">
+                        <button class="btn btn--danger btn--small" type="submit"><i class="fa-regular fa-trash-can"></i></button>
+                      </form>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% else %}
+                  <div class="lesson" style="grid-template-columns:1fr; justify-items:center">
+                    <span class="muted">В этом модуле пока нет уроков</span>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+            <p class="muted">Пока нет модулей. Добавьте первый модуль слева.</p>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</body>
+</html>

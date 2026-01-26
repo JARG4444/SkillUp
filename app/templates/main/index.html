@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Онлайн-школа SkillUp | Главная</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Общие стили -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body class="theme-dark">
+  <!-- Header -->
+  <header class="header" role="banner">
+    <div class="container header__inner">
+      <a href="{{ url_for('user.index')}}" class="logo" aria-label="SkillUp — на главную">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SkillUp">
+      </a>
+
+      <nav class="nav" aria-label="Главная навигация">
+        <ul class="nav__list">
+          <li><a href="{{ url_for('user.index')}}" class="nav__link active">Главная</a></li>
+          <li><a href="{{ url_for('post.create')}}" class="nav__link">Курсы</a></li>
+          <li><a href="{{ url_for('teacher.create')}}" class="nav__link">Преподаватели</a></li>
+          <li><a href="{{ url_for('user.contacts')}}" class="nav__link">Контакты</a></li>
+          {% if current_user.is_authenticated %}
+            <li><a href="{{ url_for('user.account') }}" class="nav__link">Личный кабинет</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+
+      <div class="header__actions header__auth">
+        {% if current_user.is_authenticated %}
+          <span class="user-greeting">{{ current_user.name }}</span>
+          <a href="{{ url_for('user.logout') }}" class="btn btn--login">Выйти</a>
+        {% else %}
+          <a href="{{ url_for('user.login')}}" class="btn btn--login">Войти</a>
+          <a href="{{ url_for('user.register')}}" class="btn btn--primary">Записаться</a>
+        {% endif %}
+      </div>
+
+      <button class="burger" id="burger" aria-label="Открыть меню" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" id="home" aria-labelledby="hero-title">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="alert-messages" style="margin-bottom:14px">
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+      <div class="container hero__inner">
+        <div class="hero__left hero__content">
+          <h1 id="hero-title" class="hero__title">
+            Изучай этичный хакинг в изолированной среде
+          </h1>
+          <p class="hero__subtitle">
+            Практические лаборатории с эмуляцией уязвимостей, защищённая песочница и автоматическая проверка флагов.
+          </p>
+
+          <div class="hero__cta hero__buttons">
+            <a href="{{ url_for('post.create')}}" class="btn btn--primary btn--large">Выбрать курс</a>
+            {% if current_user.is_authenticated %}
+            {% else %}
+              <a href="#" class="btn btn--secondary btn--large">Бесплатная консультация</a>
+            {% endif %}
+          </div>
+
+          <ul class="hero__stats" aria-hidden="true">
+            <li><strong class="count" data-target="1">0</strong><span>Лабораторий</span></li>
+            <li><strong class="count" data-target="1">0</strong><span>Студентов</span></li>
+            <li><strong class="count" data-target="1">0</strong><span>Разрешённых тестов</span></li>
+          </ul>
+
+          <p class="hero__note">
+            <span class="pill">
+              <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1L3 5v6c0 5.25 3.75 10.5 9 12 5.25-1.5 9-6.75 9-12V5l-9-4z"></path></svg>
+              Песочница
+            </span>
+            Платформа изолирует лаборатории от внешней сети. Никаких атак за пределы среды.
+          </p>
+        </div>
+
+        <div class="hero__right">
+          <!-- Интерактивный терминал -->
+          <div class="terminal" aria-hidden="false" role="region" aria-label="Интерактивный терминал">
+            <div class="terminal__header">
+              <span class="dot dot--red" aria-hidden="true"></span>
+              <span class="dot dot--yellow" aria-hidden="true"></span>
+              <span class="dot dot--green" aria-hidden="true"></span>
+              <div class="terminal__title">sandbox@cyberlab: ~</div>
+            </div>
+
+            <pre class="terminal__body" id="mock-terminal" data-lines='[
+              "Initializing sandbox...",
+              "Mounting ephemeral filesystem... OK",
+              "Starting vulnerable service: webapp v1.2.3",
+              "Network isolation: ENABLED",
+              "User: {% if current_user.is_authenticated %}{{ current_user.name }}{% else %}guest@cyberlab{% endif %}",
+              "Run: open_lab --id=001 --safe-mode"
+            ]'></pre>
+
+            <div class="terminal__footer">
+              <div class="term-status">
+                <svg width="12" height="12" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2zm0 5a1 1 0 0 1 1 1v5.586l2.707 2.707a1 1 0 0 1-1.414 1.414L11 14.414V8a1 1 0 0 1 1-1z"></path></svg>
+                sandbox
+              </div>
+              <div class="term-actions">
+                <a href="{{ url_for('post.create')}}" class="btn btn--primary">Перейти к курсам</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Нежный фон сети -->
+          <div class="bg-network" aria-hidden="true"></div>
+
+          <!-- Оставим твоё изображение (если нужно использовать) -->
+        </div>
+      </div>
+    </section>
+
+    <!-- COURSES -->
+    <section class="section courses" id="courses" aria-labelledby="courses-title">
+      <div class="container">
+        <div class="section__header">
+          <h2 id="courses-title">Курсы и лаборатории</h2>
+          <p class="muted">Практические сценарии с подсказками и автоматической проверкой флагов.</p>
+        </div>
+
+        <div class="grid grid--3 course__list">
+          <!-- Карточки как у тебя -->
+          <article class="course__card" tabindex="0" role="article" aria-label="Веб-разработка с нуля">
+            <div class="card__badge">Creaky Reception</div>
+            <h3 class="card__title">Веб</h3>
+            <p class="card__desc">Небрежно настроенный веб-ресурс с очевидными слабыми паролями и устаревшим сервисом — отлично для знакомства с разведкой, перебором учёток и базовой эксплуатацией.</p>
+            <div class="card__meta">
+              <span>Сложность: Начальный</span>
+              <span>2 часа</span>
+            </div>
+            <div class="card__actions">
+              <a href="#" class="btn btn--secondary">Подробнее</a>
+              <a href="{{ url_for('post.create')}}" class="btn btn--primary">Выбрать курс</a>
+            </div>
+          </article>
+
+          <article class="course__card" tabindex="0" role="article" aria-label="Основы UI/UX дизайна">
+            <div class="card__badge">Design</div>
+            <h3 class="card__title">Основы UI/UX дизайна</h3>
+            <p class="card__desc">Создавайте удобные интерфейсы и прототипы в Figma.</p>
+            <div class="card__meta">
+              <span>Сложность: Начальный</span>
+              <span>Время: 1 мес</span>
+            </div>
+            <div class="card__actions">
+              <a href="#" class="btn btn--secondary">Подробнее</a>
+              <a href="{{ url_for('post.create')}}" class="btn btn--primary">Выбрать курс</a>
+            </div>
+          </article>
+
+          <article class="course__card" tabindex="0" role="article" aria-label="SMM-продвижение">
+            <div class="card__badge">Marketing</div>
+            <h3 class="card__title">SMM-продвижение</h3>
+            <p class="card__desc">Научитесь привлекать клиентов через соцсети.</p>
+            <div class="card__meta">
+              <span>Сложность: Средний</span>
+              <span>Время: 2 мес</span>
+            </div>
+            <div class="card__actions">
+              <a href="#" class="btn btn--secondary">Подробнее</a>
+              <a href="{{ url_for('post.create')}}" class="btn btn--primary">Выбрать курс</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENEFITS -->
+    <section class="section benefits" aria-labelledby="benefits-title">
+      <div class="container">
+        <h2 id="benefits-title">Обучение, которое работает</h2>
+        <div class="grid grid--4 benefits__grid">
+          <div class="benefit__card">
+            <div class="benefit__icon"><i class="fas fa-comment-dots" aria-hidden="true"></i></div>
+            <h3 class="benefit__title">Обратная связь</h3>
+            <p class="benefit__text">Преподаватели проверяют каждую работу</p>
+          </div>
+          <div class="benefit__card">
+            <div class="benefit__icon"><i class="fas fa-infinity" aria-hidden="true"></i></div>
+            <h3 class="benefit__title">Доступ навсегда</h3>
+            <p class="benefit__text">Материалы останутся с вами</p>
+          </div>
+          <div class="benefit__card">
+            <div class="benefit__icon"><i class="fas fa-laptop-code" aria-hidden="true"></i></div>
+            <h3 class="benefit__title">Практика</h3>
+            <p class="benefit__text">Реальные проекты с первого урока</p>
+          </div>
+          <div class="benefit__card">
+            <div class="benefit__icon"><i class="fas fa-headset" aria-hidden="true"></i></div>
+            <h3 class="benefit__title">Поддержка 24/7</h3>
+            <p class="benefit__text">Поможем в любое время</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section class="section process" aria-labelledby="process-title">
+      <div class="container">
+        <h2 id="process-title">Как проходит обучение?</h2>
+        <div class="grid grid--4 process__steps">
+          <div class="step">
+            <div class="step__number">1</div>
+            <h3 class="step__title">Регистрация</h3>
+            <p class="step__text">Получите доступ к платформе после оплаты</p>
+          </div>
+          <div class="step">
+            <div class="step__number">2</div>
+            <h3 class="step__title">Уроки + практика</h3>
+            <p class="step__text">Смотрите лекции и выполняете задания</p>
+          </div>
+          <div class="step">
+            <div class="step__number">3</div>
+            <h3 class="step__title">Проверка</h3>
+            <p class="step__text">Преподаватель дает обратную связь</p>
+          </div>
+          <div class="step">
+            <div class="step__number">4</div>
+            <h3 class="step__title">Сертификат</h3>
+            <p class="step__text">Получаете документ об окончании</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- FOOTER -->
+    <footer class="footer" id="contacts" role="contentinfo">
+      <div class="container footer__inner">
+        <div>
+          <strong>CyberLab</strong>
+          <p class="muted">Безопасное обучение этичному хакингу</p>
+        </div>
+
+        <div class="footer__links">
+          <a href="#policy">Политика</a>
+          <a href="#report">Report abuse</a>
+          <a href="#contacts">Контакты</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Ваш основной скрипт проекта -->
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+  <!-- Небольшие анимации (не мешают функционалу) -->
+  <script>
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Терминал typing
+    (function(){
+      const el = document.getElementById('mock-terminal');
+      if (!el || prefersReduced) return;
+      const lines = JSON.parse(el.getAttribute('data-lines') || '[]');
+      let i = 0, pos = 0;
+      el.textContent = '';
+      function step(){
+        if(i >= lines.length){
+          setTimeout(()=>{ el.textContent=''; i=0; pos=0; step(); }, 2400);
+          return;
+        }
+        const line = lines[i];
+        if(pos <= line.length){
+          const prev = el.textContent.split('\n').slice(0,i).join('\n');
+          el.textContent = (i?prev+'\n':'') + line.slice(0,pos) + (pos%2?'▌':'');
+          pos++;
+          setTimeout(step, 28 + Math.random()*40);
+        } else {
+          pos = 0; i++; setTimeout(step, 320);
+        }
+      }
+      step();
+    })();
+
+    // Счётчики (hero__stats)
+    (function(){
+      const els = document.querySelectorAll('.count');
+      if (!els.length || prefersReduced) return;
+      const obs = new IntersectionObserver((entries, o)=>{
+        entries.forEach(e=>{
+          if(!e.isIntersecting) return;
+          const el = e.target, target = +el.dataset.target || 0;
+          const start = performance.now(), dur = 1200;
+          function frame(now){
+            const p = Math.min(1, (now - start) / dur);
+            el.textContent = Math.floor(p * target);
+            if(p < 1) requestAnimationFrame(frame); else el.textContent = target;
+          }
+          requestAnimationFrame(frame);
+          o.unobserve(el);
+        });
+      }, {threshold: .5});
+      els.forEach(x=>obs.observe(x));
+    })();
+
+    // 3D-tilt у карточек курсов
+    (function(){
+      if (prefersReduced) return;
+      const cards = document.querySelectorAll('.course__card');
+      cards.forEach(card=>{
+        card.addEventListener('pointermove', (e)=>{
+          const r = card.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width;
+          const py = (e.clientY - r.top) / r.height;
+          const rx = (py - 0.5) * 6;
+          const ry = (px - 0.5) * -8;
+          card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.02)`;
+          card.style.setProperty('--glowOpacity', '1');
+        });
+        card.addEventListener('pointerleave', ()=>{
+          card.style.transform = '';
+          card.style.setProperty('--glowOpacity', '0');
+        });
+      });
+    })();
+
+    // Бургер, если твой script.js не перехватывает
+    (function(){
+      const burger = document.getElementById('burger');
+      const nav = document.querySelector('.nav');
+      if(!burger || !nav) return;
+      burger.addEventListener('click', ()=>{
+        const open = burger.getAttribute('aria-expanded') === 'true';
+        burger.setAttribute('aria-expanded', String(!open));
+        nav.classList.toggle('nav--open');
+      });
+    })();
+  </script>
+</body>
+</html>

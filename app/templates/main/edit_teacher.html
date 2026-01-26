@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillUp | Преподаватели{{teacher.id}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container">
+            <div class="header__inner">
+                <a href="{{ url_for('user.index')}}" class="logo">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SkillUp">
+                </a>
+                <nav class="nav">
+                    <ul class="nav__list">
+                        <li><a href="{{ url_for('user.index')}}" class="nav__link">Главная</a></li>
+                        <li><a href="{{ url_for('post.create')}}" class="nav__link">Курсы</a></li>
+                        <li><a href="{{ url_for('teacher.create')}}" class="nav__link active">Преподаватели</a></li>
+                        <li><a href="{{ url_for('user.contacts')}}" class="nav__link">Контакты</a></li>
+                        {% if current_user.is_authenticated %}
+                            <li><a href="{{ url_for('user.account') }}" class="nav__link">Личный кабинет</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                <div class="header__auth">
+                    {% if current_user.is_authenticated %}
+                        <span class="user-greeting">{{ current_user.name }}</span>
+                        <a href="{{ url_for('user.logout') }}" class="btn btn--login">Выйти</a>
+                    {% else %}
+                        <a href="{{ url_for('user.login')}}" class="btn btn--login">Войти</a>
+                        <a href="{{ url_for('user.register')}}" class="btn btn--primary">Записаться</a>
+                    {% endif %}
+                </div>
+                <button class="burger" id="burger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Форма добавления преподавателя (только для админа) -->
+    <section class="admin-section">
+        <div class="container">
+            <div class="admin__wrapper">
+                <h2 class="admin__title">Редактировать преподавателя</h2>
+                
+                <form class="admin__form" method="POST" enctype="multipart/form-data">
+                    <div class="form__group">
+                        <label for="teacher-name">ФИО преподавателя</label>
+                        <input value="{{teacher.name}}" type="text" id="teacher-name" name="teacher-name" placeholder="Введите ФИО преподователя" required>
+                    </div>
+                    
+                    <div class="form__group">
+                        <label for="teacher-photo">Фотография</label>
+                        <input value="{{teacher.photo}}" type="file" id="teacher-photo" name="teacher-photo" accept="image/*" required>
+                    </div>
+                    
+                    <div class="form__group">
+                        <label for="teacher-exp">Стаж (лет)</label>
+                        <input value="{{teacher.exp}}" type="number" id="teacher-exp" name="teacher-exp" min="1" max="50" required>
+                    </div>
+                    
+                    <div class="form__group">
+                        <label for="teacher-subject">Дисциплина</label>
+                        <select id="teacher-subject" name="teacher-subject" required>
+                            <option value="" disabled selected>Выберите дисциплину</option>
+                            <option value="web">Веб-разработка</option>
+                            <option value="design">UI/UX Дизайн</option>
+                            <option value="smm">SMM</option>
+                            <option value="data">Data Science</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form__group">
+                        <label for="teacher-bio">Краткая биография</label>
+                        <input value="{{teacher.bio}}" id="teacher-bio" name="teacher-bio" rows="4" required></input>
+                    </div>
+                    
+                    <button type="submit" class="btn btn--primary btn--block">Сохранить изменения</button>
+                    <a href="{{ url_for('teacher.create') }}" class="btn btn--secondary">Отмена</a>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__inner">
+                <div class="footer__col">
+                    <a href="{{ url_for('user.index')}}" class="logo">
+                        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SkillUp">
+                    </a>
+                    <p class="footer__text">Онлайн-школа SkillUp - обучение современным профессиям с гарантией результата.</p>
+                </div>
+                <div class="footer__col">
+                    <h3 class="footer__title">Контакты</h3>
+                    <ul class="footer__contacts">
+                        <li><i class="fas fa-envelope"></i> info@skillup.ru</li>
+                        <li><i class="fas fa-phone"></i> +7 (999) 123-45-67</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>&copy; 2025 SkillUp. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{url_for('static', filename = 'js/del.js')}}"></script>
+</body>
+</html>

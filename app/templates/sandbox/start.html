@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Старт лаборатории — {{ lab_slug }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#071021; --bg2:#050816; --panel:#0b1220; --card:#0e1722;
+      --text:#e6eef8; --muted:#9fb3c8; --accent:#00ffcc; --accent2:#6C5CE7;
+      --ok:#7ef0b0; --warn:#ffd76b; --err:#ff6b6b;
+      --glass:rgba(255,255,255,0.04); --glass2:rgba(255,255,255,0.02);
+      --radius:14px; --shadow:0 18px 40px rgba(2,6,23,0.6);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:"Inter",system-ui; color:var(--text);
+      background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      min-height:100dvh; display:grid; place-items:center; padding:24px;
+    }
+    .wrap{width:100%; max-width:880px}
+    .card{
+      background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,.006));
+      border:1px solid rgba(255,255,255,.03); border-radius:12px; box-shadow:var(--shadow); overflow:hidden;
+    }
+    .card__head{display:flex; align-items:center; gap:12px; padding:16px; border-bottom:1px solid rgba(255,255,255,.04)}
+    .slug{padding:6px 10px; border-radius:999px; border:1px solid rgba(0,255,204,.18); color:var(--accent);
+      background:linear-gradient(90deg,rgba(0,255,204,.08),rgba(108,92,231,.06)); font-weight:800; font-size:12px}
+    h1{margin:0; font-size:22px; letter-spacing:-.01em}
+    .card__body{padding:18px}
+    .desc{color:var(--muted); margin:0 0 12px}
+    .diagram{
+      margin:8px 0 16px; padding:10px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.04); background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));
+    }
+    .svg .box{fill:#0f1a27; stroke:#41556b}
+    .svg .label{fill:#e6eef8; font:600 14px "Inter",sans-serif}
+    .svg .sublabel{fill:#9fb3c8; font:500 12px "Inter",sans-serif}
+
+    .form{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .btn{
+      appearance:none; border:1px solid rgba(0,255,204,.18); border-radius:12px; padding:12px 16px;
+      background:linear-gradient(90deg,rgba(0,255,204,.08),rgba(108,92,231,.06)); color:var(--accent); font-weight:800;
+      cursor:pointer; transition:transform .12s, box-shadow .2s;
+    }
+    .btn:hover{box-shadow:0 6px 22px rgba(0,255,204,.08)}
+    .btn:active{transform:translateY(1px)}
+    .btn--ghost{border:1px solid rgba(255,255,255,.08); background:transparent; color:var(--muted)}
+    .hint{color:var(--muted); font-size:13px; margin-top:8px}
+
+    .term{
+      margin-top:16px; border:1px solid rgba(255,255,255,.04); border-radius:12px; overflow:hidden;
+      background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));
+      font-family:"Fira Code",monospace; font-size:13px;
+    }
+    .term__head{display:flex; gap:8px; align-items:center; padding:8px 10px; border-bottom:1px solid rgba(255,255,255,.04)}
+    .dot{width:10px;height:10px;border-radius:50%}
+    .red{background:var(--err)} .yellow{background:var(--warn)} .green{background:var(--ok)}
+    .term__body{padding:12px; color:var(--accent)}
+    .muted{color:var(--muted)} .ok{color:var(--ok)}
+    @media (prefers-reduced-motion:no-preference){
+      .pulse{animation:pulse 1.7s infinite}
+      @keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="card__head">
+        <span class="slug">LAB</span>
+        <h1>Запуск лаборатории: <span style="color:var(--accent)">{{ lab_slug }}</span></h1>
+      </div>
+      <div class="card__body">
+        <p class="desc">Создастся изолированная песочница. Сессия будет уничтожена автоматически по завершении.</p>
+        <form class="form" method="post">
+          <button type="submit" class="btn">Запустить песочницу</button>
+          <a href="{{ url_for('user.index') }}" class="btn btn--ghost">Назад</a>
+        </form>
+
+        <div class="hint">После запуска вы будете перенаправлены в интерфейс сессии.</div>
+
+        <div class="term">
+          <div class="term__head"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <div style="margin-left:auto; color:var(--muted); font-weight:700; font-size:12px">bootstrap log</div>
+          </div>
+          <div class="term__body" id="log">
+            <div class="muted pulse">Awaiting action...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Просто косметика логов (не влияет на бэкенд)
+    const log = document.getElementById('log');
+    function add(line, cls=''){ const d=document.createElement('div'); d.className=cls; d.textContent=line; log.appendChild(d);}
+    add("Tip: нажмите «Запустить песочницу», чтобы создать изолированную VM.", "muted");
+  </script>
+</body>
+</html>

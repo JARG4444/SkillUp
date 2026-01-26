@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Лабораторная: {{ lesson.title }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    html,body{height:100%;margin:0;background:#0b0d10;color:#eee;font-family:sans-serif}
+    .wrap{display:flex;flex-direction:column;height:100%}
+    .bar{padding:10px;background:#13161a;border-bottom:1px solid #1e2329;display:flex;gap:8px;align-items:center}
+    .bar a{color:#9ecbff;text-decoration:none}
+    .content{flex:1;min-height:0}
+    iframe{border:0;width:100%;height:100%}
+    form{display:flex;gap:8px;align-items:center;margin-left:auto}
+    input[type="text"]{padding:6px 8px;border-radius:6px;border:1px solid #2a2f37;background:#0f1318;color:#eee}
+    button{padding:6px 10px;border:0;border-radius:6px;background:#1f6feb;color:#fff}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="bar">
+      <a href="{{ url_for('course.course_detail', course_id=course_id) }}">← к курсу</a>
+      <strong>{{ lesson.title }}</strong>
+      <form method="post" action="{{ url_for('sandbox.verify_flag', course_id=course_id, lesson_id=lesson.id) }}">
+        <label>Флаг: <input type="text" name="flag" placeholder="FLAG{...}" required></label>
+        <button type="submit">Проверить</button>
+      </form>
+    </div>
+    <div class="content">
+      <!-- Менеджер рендерит двухпанельный UI (веб+терминал) сам -->
+      <iframe src="{{ iframe_src }}"></iframe>
+    </div>
+  </div>
+</body>
+</html>

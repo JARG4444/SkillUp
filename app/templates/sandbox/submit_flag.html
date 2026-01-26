@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Отправка флага — {{ lab_slug }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#071021; --bg2:#050816; --text:#e6eef8; --muted:#9fb3c8;
+      --accent:#00ffcc; --accent2:#6C5CE7; --ok:#7ef0b0; --err:#ff6b6b;
+      --glass:rgba(255,255,255,.04);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100dvh; display:grid; place-items:center; padding:24px;
+      font-family:"Inter",system-ui; color:var(--text);
+      background:linear-gradient(180deg,var(--bg) 0%, var(--bg2) 100%);
+    }
+    .wrap{width:100%; max-width:780px}
+    .panel{
+      background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,.006));
+      border:1px solid rgba(255,255,255,.03); border-radius:12px; box-shadow:0 18px 40px rgba(2,6,23,.6); overflow:hidden;
+    }
+    .panel__head{display:flex; align-items:center; gap:12px; padding:16px; border-bottom:1px solid rgba(255,255,255,.04)}
+    .badge{padding:6px 10px; border-radius:999px; color:var(--accent); border:1px solid rgba(0,255,204,.18);
+      background:linear-gradient(90deg,rgba(0,255,204,.08),rgba(108,92,231,.06)); font-weight:800; font-size:12px}
+    h1{margin:0; font-size:22px}
+    .panel__body{padding:18px}
+
+    .form{display:grid; gap:10px; margin-top:10px}
+    .input{
+      display:flex; align-items:center; gap:10px; padding:12px 12px; border-radius:12px;
+      background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06);
+    }
+    .input input{all:unset; flex:1; font:500 14px "Inter",sans-serif; color:var(--text)}
+    .input:focus-within{border-color:rgba(0,255,204,.22); box-shadow:0 0 0 4px rgba(0,255,204,.08)}
+    .btn{
+      appearance:none; border:1px solid rgba(0,255,204,.18); border-radius:12px; padding:12px 16px;
+      background:linear-gradient(90deg,rgba(0,255,204,.08),rgba(108,92,231,.06)); color:var(--accent);
+      font-weight:800; cursor:pointer; transition:transform .12s, box-shadow .2s;
+    }
+    .btn:hover{box-shadow:0 6px 22px rgba(0,255,204,.08)}
+    .btn:active{transform:translateY(1px)}
+    .btn--ghost{border:1px solid rgba(255,255,255,.08); background:transparent; color:var(--muted)}
+
+    .alerts{margin-top:12px; display:grid; gap:8px}
+    .alert{padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.06); background:rgba(255,255,255,.03)}
+    .alert.ok{border-color:rgba(126,240,176,.35); color:var(--ok)}
+    .alert.err{border-color:rgba(255,107,107,.35); color:var(--err)}
+
+    .term{
+      margin-top:16px; border:1px solid rgba(255,255,255,.04); border-radius:12px; overflow:hidden;
+      background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));
+      font-family:"Fira Code",monospace; font-size:13px;
+    }
+    .term__head{display:flex; gap:8px; align-items:center; padding:8px 10px; border-bottom:1px solid rgba(255,255,255,.04)}
+    .dot{width:10px;height:10px;border-radius:50%}
+    .green{background:var(--ok)} .yellow{background:#ffd76b} .red{background:var(--err)}
+    .term__body{padding:12px; color:var(--accent)}
+    .muted{color:var(--muted)} .ok{color:var(--ok)} .err{color:var(--err)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <div class="panel__head">
+        <span class="badge">FLAG</span>
+        <h1>Отправить флаг для: <span style="color:var(--accent)">{{ lab_slug }}</span></h1>
+      </div>
+      <div class="panel__body">
+        <form class="form" method="post">
+          <label class="input" aria-label="FLAG">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 3v18H4V3h2Zm3 1h9l-1.5 3L18 10H9V4Z"/></svg>
+            <input name="flag" placeholder="FLAG{...}" required />
+          </label>
+          <div style="display:flex; gap:10px; flex-wrap:wrap">
+            <button type="submit" class="btn">Проверить</button>
+            <a href="/" class="btn btn--ghost">Назад</a>
+          </div>
+        </form>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+          <div class="alerts">
+            {% for cat, msg in messages %}
+              <div class="alert {{ 'ok' if cat in ['success','ok'] else 'err' }}">
+                <strong>{{ cat|upper }}</strong>: {{ msg }}
+              </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        {% endwith %}
+
+        <!-- Терминал вывода (косметика; серверные флэши остаются выше) -->
+        <div class="term">
+          <div class="term__head"><span class="dot green"></span><span class="dot yellow"></span><span class="dot red"></span>
+            <div style="margin-left:auto; color:var(--muted); font-weight:700; font-size:12px">flag-check</div>
+          </div>
+          <div class="term__body" id="term">
+            <div class="muted">Введите флаг и нажмите «Проверить»…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Локальный терминал: эхо-набор флага звёздочками
+    const form = document.querySelector('form');
+    const input = form.querySelector('input[name="flag"]');
+    const term = document.getElementById('term');
+    function line(t, cls=''){ const d=document.createElement('div'); d.className=cls; d.textContent=t; term.appendChild(d); term.scrollTop=term.scrollHeight; }
+    form.addEventListener('submit', ()=>{ line("$ submit FLAG{***masked***}"); line("…проверка на сервере", "muted"); });
+  </script>
+</body>
+</html>

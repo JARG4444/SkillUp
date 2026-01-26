@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Сессия {{ session_id }} — CyberLab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#071021; --bg2:#050816; --text:#e6eef8; --muted:#9fb3c8;
+      --accent:#00ffcc; --accent2:#6C5CE7; --ok:#7ef0b0; --err:#ff6b6b; --warn:#ffd76b;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%; margin:0}
+    body{
+      background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);
+      color:var(--text); font-family:"Inter",system-ui; display:flex; flex-direction:column; min-height:100vh;
+    }
+    .bar{
+      position:sticky; top:0; z-index:2; display:flex; align-items:center; gap:12px; padding:10px 12px;
+      backdrop-filter: blur(8px);
+      background: linear-gradient(180deg, rgba(7,16,33,.36), rgba(7,16,33,.12));
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .status{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:13px}
+    .dot{width:10px;height:10px;border-radius:50%}
+    .green{background:var(--ok)} .yellow{background:var(--warn)} .red{background:var(--err)}
+    .grow{flex:1}
+    .btn{
+      appearance:none; border:1px solid rgba(0,255,204,.18); border-radius:10px; padding:8px 12px;
+      background:linear-gradient(90deg,rgba(0,255,204,.08),rgba(108,92,231,.06)); color:var(--accent); font-weight:700;
+      cursor:pointer; transition:transform .12s, box-shadow .18s; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+    }
+    .btn:hover{box-shadow:0 6px 22px rgba(0,255,204,.08)}
+    .btn:active{transform:translateY(1px)}
+    .btn--ghost{border:1px solid rgba(255,255,255,.08); background:transparent; color:var(--muted)}
+
+    .frame-wrap{position:relative; flex:1; min-height:0; overflow:hidden}
+    iframe{position:absolute; inset:0; width:100%; height:100%; border:0; opacity:0; transition:opacity .35s ease}
+
+    /* Лоадер */
+    .loader{
+      position:absolute; inset:0; display:grid; place-items:center; pointer-events:none;
+      background: radial-gradient(600px 240px at 50% 0%, rgba(0,255,204,.06), transparent 60%);
+    }
+    .spinner{
+      width:48px;height:48px; border-radius:50%;
+      border:3px solid rgba(255,255,255,.12); border-top-color: var(--accent);
+      animation:spin 1s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .hint{position:absolute; bottom:18px; left:50%; transform:translateX(-50%); color:var(--muted); font-size:12px; text-align:center}
+    kbd{
+      background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18);
+      border-bottom-width:2px; border-radius:6px; padding:2px 6px; font-weight:700;
+    }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <div class="status"><span class="dot green" id="dot"></span> session: <strong>#{{ session_id }}</strong></div>
+    <div class="grow"></div>
+    <button class="btn btn--ghost" id="btn-reload" title="Перезагрузить iframe">Reload</button>
+    <a class="btn btn--ghost" id="btn-open" target="_blank" rel="noopener" href="{{ client_url }}">Открыть в новой вкладке</a>
+    <button class="btn" id="btn-full">Fullscreen</button>
+  </div>
+
+  <div class="frame-wrap">
+    <div class="loader" id="loader">
+      <div class="spinner"></div>
+      <div class="hint">Загружаем окружение… <span style="opacity:.7">Подсказка:</span> нажмите <kbd>F</kbd> для фуллскрина, <kbd>R</kbd> — перезагрузка</div>
+    </div>
+    <iframe id="lab-frame" src="{{ client_url }}" allow="clipboard-read; clipboard-write"></iframe>
+  </div>
+
+  <script>
+    const frame = document.getElementById('lab-frame');
+    const loader = document.getElementById('loader');
+    const dot = document.getElementById('dot');
+    const btnReload = document.getElementById('btn-reload');
+    const btnFull = document.getElementById('btn-full');
+
+    // Переход состояний
+    frame.addEventListener('load', () => {
+      loader.style.display = 'none';
+      frame.style.opacity = '1';
+      dot.className = 'dot green';
+    });
+    frame.addEventListener('error', () => {
+      loader.style.display = 'grid';
+      dot.className = 'dot red';
+    });
+
+    // Кнопки
+    btnReload.addEventListener('click', () => {
+      dot.className = 'dot yellow';
+      loader.style.display = 'grid';
+      frame.style.opacity = '0';
+      // форсируем перезагрузку
+      const src = frame.getAttribute('src');
+      frame.setAttribute('src', src);
+    });
+
+    // Fullscreen API
+    function toggleFull(){
+      const el = document.documentElement;
+      if (!document.fullscreenElement) { el.requestFullscreen?.(); }
+      else { document.exitFullscreen?.(); }
+    }
+    btnFull.addEventListener('click', toggleFull);
+
+    // Шорткаты: F — fullscreen, R — reload
+    window.addEventListener('keydown', (e)=>{
+      if(e.key.toLowerCase()==='f'){ e.preventDefault(); toggleFull(); }
+      if(e.key.toLowerCase()==='r'){ e.preventDefault(); btnReload.click(); }
+    });
+  </script>
+</body>
+</html>

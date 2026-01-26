@@ -1,0 +1,26 @@
+<div id="assignCourseModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Прикрепить к курсу</h3>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form action="{{ url_for('user.assign_course') }}" method="POST">
+                <input type="hidden" name="teacher_id" id="teacherId">
+                <div class="form-group">
+                    <label for="courseSelect">Выберите курс:</label>
+                    <select name="course_id" id="courseSelect" class="form-control" required>
+                        <option value="">-- Выберите курс --</option>
+                        {% for course in all_courses %}
+                        <option value="{{ course.id }}">{{ course.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn--primary">Прикрепить</button>
+                    <button type="button" class="btn btn--secondary" onclick="closeModal()">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

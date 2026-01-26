@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Студенты курса: {{ course.name }}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#050816;--panel:#0b1220;--card:#0e1722;
+      --text:#e6eef8;--muted:#9fb3c8;--accent:#00ffcc;
+      --bd:1px solid rgba(255,255,255,.06);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;font-family:"Inter",system-ui;background:radial-gradient(circle at top,#111827,#020617);
+      color:var(--text);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:24px 16px 40px}
+    h1{margin:16px 0 8px;font-size:24px}
+    .muted{color:var(--muted);font-size:13px}
+    table{width:100%;border-collapse:collapse;margin-top:18px;background:rgba(15,23,42,.9);border-radius:12px;overflow:hidden}
+    thead{background:rgba(15,23,42,1)}
+    th,td{padding:10px 12px;font-size:13px;border-bottom:1px solid rgba(148,163,184,.18);text-align:left}
+    th{font-weight:600;color:var(--muted);white-space:nowrap}
+    tbody tr:nth-child(even){background:rgba(15,23,42,.8)}
+    .score{font-weight:800;color:var(--accent)}
+    .tag{display:inline-block;padding:2px 6px;border-radius:999px;font-size:11px;border:1px solid rgba(148,163,184,.4);color:var(--muted)}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .back{display:inline-flex;align-items:center;gap:6px;margin-top:20px;font-size:13px;color:var(--muted)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="{{ url_for('course.course_detail', course_id=course.id) }}">⬅ Назад к курсу</a>
+  <h1>Студенты курса «{{ course.name }}»</h1>
+  <p class="muted">Здесь видно прогресс по лекциям, тестам и лабораторным, а также итоговый балл.</p>
+
+  {% if rows %}
+  <table>
+    <thead>
+    <tr>
+      <th>Студент</th>
+      <th>Лекции</th>
+      <th>Тесты</th>
+      <th>Лабы</th>
+      <th>Попытки флагов</th>
+      <th>Итоговый балл</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        <td>{{ row.student.name or row.student.login }}</td>
+        <td>
+          {{ row.lectures_done }}/{{ row.lectures_total }}
+        </td>
+        <td>
+          {% if row.tests_total %}
+            {{ (row.tests_ratio * 100) | round(0) }}% ({{ row.tests_total }})
+          {% else %}
+            <span class="tag">нет тестов</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if row.labs_total %}
+            {{ row.labs_solved }}/{{ row.labs_total }}
+          {% else %}
+            <span class="tag">нет лаб</span>
+          {% endif %}
+        </td>
+        <td>{{ row.lab_attempts_total }}</td>
+        <td class="score">{{ row.final_score }}/10</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="muted">На этом курсе пока нет записанных студентов.</p>
+  {% endif %}
+</div>
+</body>
+</html>

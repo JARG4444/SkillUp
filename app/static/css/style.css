@@ -1,0 +1,2768 @@
+/* Reset / base */
+:root{
+  --bg:#071021;
+  --panel:#0b1220;
+  --muted:#9fb3c8;
+  --text:#e6eef8;
+  --accent:#00ffcc; /* cyber green */
+  --accent-2:#6C5CE7; /* purple */
+  --glass: rgba(255,255,255,0.04);
+  --glass-2: rgba(255,255,255,0.02);
+  --card:#0e1722;
+  --radius:14px;
+  --shadow: 0 6px 20px rgba(2,6,23,0.6);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body {
+  margin:0;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg, var(--bg) 0%, #050816 100%);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.45;
+  overflow-x:hidden;
+  background-attachment:fixed;
+}
+
+/* Containers */
+.container{max-width:1140px;margin:0 auto;padding:28px}
+
+/* Header */
+.header{
+  position:fixed;left:0;right:0;top:0;z-index:50;
+  backdrop-filter: blur(8px);
+  background: linear-gradient(180deg, rgba(7,16,33,0.36), rgba(7,16,33,0.12));
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.header__inner{display:flex;align-items:center;gap:18px;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;color:var(--text);text-decoration:none}
+.brand svg{color:var(--accent-2)}
+.brand__name{font-weight:700}
+.brand__tag{font-size:11px;padding:4px 8px;background:linear-gradient(90deg, rgba(0,255,204,0.08), rgba(108,92,231,0.06));border-radius:999px;color:var(--accent);font-weight:600;margin-left:6px}
+
+/* Nav */
+.nav{display:block}
+.nav__list{list-style:none;margin:0;padding:0;display:flex;gap:14px}
+.nav__list a{color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:8px;transition:all .18s}
+.nav__list a:hover{color:var(--text);background:var(--glass)}
+
+/* Burger (mobile) */
+.burger{display:none;background:none;border:0;padding:8px;cursor:pointer}
+.burger span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;border-radius:2px;transition:transform .25s}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;border-radius:10px;padding:10px 14px;font-weight:600;border:0;cursor:pointer;
+  transition:transform .12s ease, box-shadow .18s ease, opacity .12s;
+  color:var(--text);background:transparent;
+}
+.btn:active{transform:translateY(1px)}
+.btn--primary{
+  background: linear-gradient(90deg, rgba(0,255,204,0.08), rgba(108,92,231,0.06));
+  color:var(--accent);
+  box-shadow: 0 6px 22px rgba(0,255,204,0.03), 0 0 18px rgba(0,255,204,0.04) inset;
+  position:relative;overflow:hidden;
+}
+.btn--primary::after{
+  content:"";position:absolute;left:-40%;top:0;width:40%;height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+  transform:skewX(-12deg);opacity:0;transition:all .45s;
+}
+.btn--primary:hover::after{left:120%;opacity:1;transition:all .6s}
+.btn--primary:focus{outline:3px solid rgba(0,255,204,0.12);outline-offset:3px}
+
+.btn--secondary{
+  background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  color:var(--muted);
+  border:1px solid rgba(255,255,255,0.03);
+}
+
+/* Ghost */
+.btn--ghost{color:var(--muted);background:transparent;border:1px solid transparent;padding:8px 10px}
+
+/* Hero */
+.hero{padding:110px 0 80px;position:relative;overflow:visible}
+.hero__inner{display:flex;gap:36px;align-items:center}
+.hero__left{flex:1;max-width:640px}
+.hero__title{font-size:36px;margin:0 0 12px;letter-spacing:-0.02em}
+.hero__subtitle{color:var(--muted);margin:0 0 18px}
+.hero__cta{display:flex;gap:12px;margin-top:16px}
+.hero__stats{display:flex;gap:24px;margin-top:26px;list-style:none;padding:0}
+.hero__stats li{display:flex;flex-direction:column}
+.hero__stats strong{font-size:20px;color:var(--accent);display:block}
+.hero__note{color:var(--muted);margin-top:18px;font-size:14px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:linear-gradient(90deg, rgba(0,255,204,0.04), transparent);color:var(--accent);font-weight:700;margin-right:8px}
+
+/* Hero right — terminal and background */
+.hero__right{width:460px;position:relative;display:flex;flex-direction:column;align-items:flex-end}
+.terminal{
+  width:420px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.03);
+  box-shadow: var(--shadow);
+  overflow:hidden;position:relative;
+}
+.terminal__header{display:flex;align-items:center;gap:10px;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.02)}
+.terminal__header .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot--red{background:#ff6b6b}
+.dot--yellow{background:#ffd76b}
+.dot--green{background:#7ef0b0}
+.terminal__title{margin-left:auto;color:var(--muted);font-weight:600;font-size:12px}
+.terminal__body{
+  font-family:"Fira Code", monospace;font-size:13px;color:var(--accent);
+  padding:12px 10px;min-height:120px;white-space:pre-wrap;line-height:1.35;
+}
+.terminal__footer{display:flex;justify-content:space-between;align-items:center;padding:10px;border-top:1px solid rgba(255,255,255,0.02)}
+.term-status{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:13px}
+.term-actions .btn{padding:8px 10px}
+
+/* subtle network bg */
+.bg-network{position:absolute;left:0;right:-40px;top:18px;height:260px;background-image:
+  radial-gradient(circle at 10% 20%, rgba(0,255,204,0.02), transparent 2%),
+  radial-gradient(circle at 90% 70%, rgba(108,92,231,0.02), transparent 2%);
+  filter: blur(14px);opacity:0.8;pointer-events:none;transform:translateZ(0)}
+
+/* Sections */
+.section{padding:64px 0}
+.section__header{margin-bottom:18px}
+.muted{color:var(--muted)}
+
+/* Grid */
+.grid{display:grid;gap:18px}
+.grid--3{grid-template-columns:repeat(3,1fr)}
+.grid--2{grid-template-columns:repeat(2,1fr)}
+
+/* Course cards */
+.course__card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border-radius:12px;padding:20px;border:1px solid rgba(255,255,255,0.03);
+  transition:transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s;
+  transform-origin:center center;
+  position:relative;overflow:visible;cursor:default;
+  --glowOpacity:0;
+}
+.course__card:focus{outline:3px solid rgba(108,92,231,0.08);outline-offset:6px}
+.course__card:hover{
+  transform:translateY(-8px) scale(1.01);
+  box-shadow: 0 18px 40px rgba(2,6,23,0.6);
+}
+.course__card::after{
+  content:'';position:absolute;inset:0;border-radius:12px;pointer-events:none;
+  box-shadow: 0 6px 40px rgba(108,92,231,0.06);
+  opacity:var(--glowOpacity);
+  transition:opacity .28s;
+}
+.card__badge{display:inline-block;padding:6px 8px;border-radius:8px;background:rgba(0,0,0,0.12);font-weight:700;color:var(--accent-2);font-size:13px}
+.card__title{margin:14px 0 8px;font-size:18px}
+.card__desc{color:var(--muted);font-size:14px;margin:0 0 12px}
+.card__meta{display:flex;gap:12px;color:var(--muted);font-size:13px;margin-bottom:12px}
+.card__actions{display:flex;gap:10px}
+
+/* Footer */
+.footer{padding:28px 0;border-top:1px solid rgba(255,255,255,0.02);background:linear-gradient(180deg,transparent, rgba(0,0,0,0.02))}
+.footer__inner{display:flex;justify-content:space-between;align-items:center}
+
+/* Feature box */
+.feature--glow{padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(0,255,204,0.02), rgba(108,92,231,0.02));border:1px solid rgba(0,255,204,0.03)}
+
+/* Accessibility and reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important;animation:none!important}
+}
+
+/* Responsive */
+@media (max-width: 980px){
+  .container{padding:20px}
+  .hero__inner{flex-direction:column;align-items:flex-start}
+  .hero__right{width:100%;align-items:stretch;margin-top:22px}
+  .grid--3{grid-template-columns:repeat(2,1fr)}
+  .nav{display:none}
+  .burger{display:block}
+  .hero{padding-top:88px}
+}
+@media (max-width:640px){
+  .grid--3{grid-template-columns:1fr}
+  .hero__title{font-size:24px}
+  .terminal{width:100%}
+  .brand__name{display:none}
+}
+
+
+/* ---------- Courses ---------- */
+.courses{padding:64px 0}
+.section__title{margin:0 0 8px; font-size:28px; letter-spacing:-0.01em}
+.section__subtitle{margin:0 0 18px; color:var(--muted)}
+.courses__grid{
+  display:grid; gap:18px;
+  grid-template-columns: repeat(3, 1fr);
+}
+.course__card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.03);
+  border-radius:12px; overflow:hidden; position:relative;
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s;
+}
+.course__card:hover{transform: translateY(-8px) scale(1.01); box-shadow: 0 18px 40px rgba(2,6,23,0.6)}
+.course__image{position:relative; overflow:hidden}
+.course__image img{display:block; width:100%; height:auto}
+.course__tag{
+  position:absolute; left:12px; top:12px;
+  padding:6px 10px; font-weight:700; font-size:12px;
+  background:rgba(0,0,0,0.35); color:#fff; border-radius:999px;
+  border:1px solid rgba(255,255,255,0.15);
+}
+.course__tag--free{background:rgba(0,255,204,0.2); color:#001511}
+.course__content{padding:16px}
+.course__title{margin:6px 0 8px; font-size:18px}
+.course__desc{margin:0 0 12px; color:var(--muted); font-size:14px}
+.course__meta{display:flex; gap:12px; color:var(--muted); font-size:13px; margin-bottom:12px}
+.course__footer{display:flex; align-items:center; justify-content:space-between}
+.course__price{font-weight:800; color:var(--accent)}
+
+/* ---------- Benefits ---------- */
+.benefits{padding:64px 0}
+.benefits__grid{
+  display:grid; gap:18px;
+  grid-template-columns: repeat(4, 1fr);
+}
+.benefit__card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.03);
+  border-radius:12px; padding:20px; text-align:center;
+  transition: transform .25s, box-shadow .25s;
+}
+.benefit__card:hover{transform: translateY(-6px); box-shadow: 0 14px 36px rgba(2,6,23,0.55)}
+.benefit__icon{font-size:22px; color:var(--accent-2); margin-bottom:10px}
+.benefit__title{margin:6px 0 6px}
+.benefit__text{margin:0; color:var(--muted)}
+
+/* ---------- Process (Steps) ---------- */
+.process{padding:64px 0}
+.process__steps{
+  display:grid; gap:18px;
+  grid-template-columns: repeat(4, 1fr);
+}
+.step{
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.03);
+  border-radius:12px; padding:20px;
+  transition: transform .25s, box-shadow .25s;
+}
+.step:hover{transform: translateY(-6px); box-shadow: 0 14px 36px rgba(2,6,23,0.55)}
+.step__number{
+  width:38px; height:38px; border-radius:10px;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-weight:800; color:var(--accent);
+  background:linear-gradient(90deg, rgba(0,255,204,0.08), rgba(108,92,231,0.06));
+  border:1px solid rgba(255,255,255,0.06);
+  margin-bottom:8px;
+}
+.step__title{margin:6px 0 6px}
+.step__text{margin:0; color:var(--muted)}
+
+/* ---------- Reviews ---------- */
+.reviews{padding:64px 0}
+.reviews__grid{
+  display:grid; gap:18px;
+  grid-template-columns: repeat(3, 1fr);
+}
+.review__card{
+  border-radius:12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.03);
+  transition: transform .25s, box-shadow .25s;
+}
+.review__card:hover{transform: translateY(-6px); box-shadow: 0 14px 36px rgba(2,6,23,0.55)}
+.review__content{padding:18px}
+.review__header{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px}
+.review__name{margin:0; font-size:16px}
+.review__course{color:var(--muted); font-size:13px}
+.review__text{margin:0 0 8px; color:var(--muted)}
+.review__date{font-size:12px; color:#8ea0b4}
+
+/* ---------- Footer ---------- */
+.footer{padding:28px 0; border-top:1px solid rgba(255,255,255,0.02); background:linear-gradient(180deg,transparent, rgba(0,0,0,0.02))}
+.footer__inner{display:flex; gap:22px; justify-content:space-between; align-items:flex-start}
+.footer__col{min-width:240px}
+.footer__title{margin:0 0 8px}
+.footer__links, .footer__contacts{list-style:none; padding:0; margin:0}
+.footer__links li a{color:var(--muted); text-decoration:none}
+.footer__links li a:hover{color:var(--text)}
+.footer__contacts li{display:flex; align-items:center; gap:10px; color:var(--muted); padding:4px 0}
+.footer__text{color:var(--muted)}
+.footer__social a{color:var(--muted); margin-right:10px; font-size:18px}
+.footer__social a:hover{color:var(--text)}
+.footer__bottom{
+  margin-top:18px; padding-top:10px;
+  border-top:1px solid rgba(255,255,255,0.05);
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.footer__bottom a{color:var(--muted); text-decoration:none}
+.footer__bottom a:hover{color:var(--text)}
+
+/* ---------- Контейнер и отступы ---------- */
+.container{max-width:1140px; margin:0 auto; padding:28px}
+.section__footer{margin-top:18px; text-align:center}
+
+/* ---------- Адаптив ---------- */
+@media (max-width: 1100px){
+  .hero__image{max-width:48%}
+}
+@media (max-width: 980px){
+  .container{padding:20px}
+  .nav{display:none}
+  .burger{display:block}
+  .hero__inner{flex-direction:column; align-items:flex-start}
+  .hero__image{max-width:100%; width:100%; order:2}
+  .hero__content{order:1}
+  .courses__grid{grid-template-columns: repeat(2, 1fr)}
+  .benefits__grid{grid-template-columns: repeat(2, 1fr)}
+  .process__steps{grid-template-columns: repeat(2, 1fr)}
+  .reviews__grid{grid-template-columns: repeat(2, 1fr)}
+}
+@media (max-width: 640px){
+  .hero{padding-top:110px}
+  .hero__title{font-size:24px}
+  .courses__grid,
+  .benefits__grid,
+  .process__steps,
+  .reviews__grid{grid-template-columns: 1fr}
+  .brand__name{display:none}
+}
+
+/* ---------- Доступность ---------- */
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important; transition:none!important}
+}
+
+
+/* ===========================
+   LOGIN PAGE (no HTML changes)
+   =========================== */
+
+/* Если переменные уже есть — не страшно, они переопределятся теми же значениями */
+:root{
+  --bg:#071021;
+  --panel:#0b1220;
+  --muted:#9fb3c8;
+  --text:#e6eef8;
+  --accent:#00ffcc;      /* cyber green */
+  --accent-2:#6C5CE7;    /* purple */
+  --glass: rgba(255,255,255,0.04);
+  --card:#0e1722;
+  --radius:14px;
+  --shadow: 0 6px 20px rgba(2,6,23,0.6);
+}
+
+/* Базовый фон/текст, если на login отдельный layout */
+body.theme-dark, body{
+  background: linear-gradient(180deg, var(--bg) 0%, #050816 100%);
+  color: var(--text);
+}
+
+/* ---------- Header / Nav совместимость ---------- */
+.logo img{height:34px; display:block}
+.nav__list{list-style:none; margin:0; padding:0; display:flex; gap:14px}
+.nav__link{
+  color:var(--muted);
+  text-decoration:none;
+  padding:8px 10px;
+  border-radius:8px;
+  transition:all .18s;
+}
+.nav__link:hover{color:var(--text); background:var(--glass)}
+.nav__link.active{color:var(--text)}
+.btn.btn--login{color:var(--muted); background:transparent; border:1px solid transparent; padding:8px 10px}
+
+/* ---------- Hero offset для фиксированной шапки ---------- */
+.auth-section{padding:120px 0 72px; position:relative}
+
+/* ---------- Карточка формы ---------- */
+.auth__wrapper{
+  position:relative;
+  max-width:720px; margin:0 auto;
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.03);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding:28px;
+  overflow:hidden;
+}
+
+/* Мягкие «неоновые» пятна за карточкой */
+.auth__wrapper::before,
+.auth__wrapper::after{
+  content:""; position:absolute; inset:-1px; pointer-events:none;
+  background-image:
+    radial-gradient(circle at 22% 28%, rgba(0,255,204,0.05), transparent 40%),
+    radial-gradient(circle at 78% 72%, rgba(108,92,231,0.05), transparent 40%);
+  filter: blur(22px);
+  opacity:.85;
+}
+
+/* ---------- Сообщения ---------- */
+.alert-messages{margin-bottom:14px}
+.alert{
+  padding:10px 12px; border-radius:10px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.06);
+  color:var(--text);
+}
+.alert-success{border-color:rgba(0,255,204,0.25)}
+.alert-info{border-color:rgba(108,92,231,0.25)}
+.alert-warning{border-color:rgba(255,196,0,0.25)}
+.alert-error,.alert-danger{border-color:rgba(255,64,64,0.35)}
+
+/* ---------- Заголовок ---------- */
+.auth__header{text-align:center; margin-bottom:18px}
+.auth__header h1{margin:0 0 6px; font-size:28px; letter-spacing:-0.01em}
+.auth__header p{margin:0; color:var(--muted)}
+
+/* ---------- Форма ---------- */
+.auth__form{display:grid; gap:14px}
+.form__group{position:relative}
+.form__group label{
+  display:block; margin:4px 0 8px;
+  color:var(--muted); font-weight:600; font-size:14px;
+}
+
+/* Иконки <i> уже в HTML — позиционируем их без изменения разметки */
+.form__group > i{
+  position:absolute; left:12px; bottom:12px; /* выравнивание по полю ввода */
+  color:var(--muted); opacity:.9; pointer-events:none; z-index:1;
+}
+
+/* Поля ввода — добавляем отступ под иконку */
+.auth__form input[type="text"],
+.auth__form input[type="email"],
+.auth__form input[type="password"]{
+  width:100%;
+  padding:12px 12px 12px 40px; /* место под иконку */
+  color:var(--text);
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:10px;
+  transition: box-shadow .18s, border-color .18s, background .18s, transform .12s;
+}
+.auth__form input::placeholder{color:#97a8bd}
+.auth__form input:focus{
+  outline:none;
+  border-color: rgba(0,255,204,0.22);
+  box-shadow: 0 0 0 4px rgba(0,255,204,0.08);
+  background:rgba(255,255,255,0.03);
+}
+
+/* Строка с чекбоксом и ссылкой */
+.form__row{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; margin:4px 0 2px;
+}
+.form__checkbox{display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; color:var(--muted)}
+.form__checkbox input{accent-color: var(--accent)}
+.form__link{color:var(--accent); text-decoration:none}
+.form__link:hover{text-decoration:underline}
+
+/* Кнопка «Войти» — на всю ширину + неоновый скан */
+.btn.btn--primary.btn--block{
+  width:100%; justify-content:center; padding:12px 14px; font-size:15px;
+  background: linear-gradient(90deg, rgba(0,255,204,0.08), rgba(108,92,231,0.06));
+  color:var(--accent);
+  box-shadow: 0 6px 22px rgba(0,255,204,0.03), 0 0 18px rgba(0,255,204,0.04) inset;
+  position:relative; overflow:hidden;
+}
+.btn.btn--primary.btn--block::after{
+  content:""; position:absolute; left:-40%; top:0; width:40%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  transform:skewX(-12deg); opacity:0; transition:all .55s;
+}
+.btn.btn--primary.btn--block:hover::after{left:120%; opacity:1; transition:all .75s}
+
+/* Низ формы */
+.auth__footer{margin-top:2px; text-align:center; color:var(--muted)}
+.auth__footer a{color:var(--accent); text-decoration:none}
+.auth__footer a:hover{text-decoration:underline}
+
+/* ---------- Footer совместимость ---------- */
+.footer__col{min-width:240px}
+.footer__title{margin:0 0 8px}
+.footer__contacts{list-style:none; padding:0; margin:0}
+.footer__contacts li{display:flex; align-items:center; gap:10px; color:var(--muted); padding:4px 0}
+
+/* ---------- Мобильная адаптация ---------- */
+@media (max-width: 980px){
+  .auth-section{padding-top:100px}
+}
+@media (max-width:640px){
+  .auth__wrapper{padding:20px}
+  .auth__header h1{font-size:22px}
+  .form__row{flex-direction:column; align-items:flex-start}
+}
+
+/* ---------- Доступность ---------- */
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important; transition:none!important}
+}
+
+/* =========================================
+   COURSES PAGE (no HTML changes, cyber dark)
+   ========================================= */
+
+/* Переменные — безопасно переопределяются, если уже есть */
+:root{
+  --bg:#071021;
+  --panel:#0b1220;
+  --muted:#9fb3c8;
+  --text:#e6eef8;
+  --accent:#00ffcc;      /* cyber green */
+  --accent-2:#6C5CE7;    /* purple */
+  --glass: rgba(255,255,255,0.04);
+  --glass-2: rgba(255,255,255,0.02);
+  --card:#0e1722;
+  --radius:14px;
+  --shadow: 0 6px 20px rgba(2,6,23,0.6);
+}
+
+/* Общий фон/текст */
+html,body{background: linear-gradient(180deg, var(--bg) 0%, #050816 100%); color:var(--text)}
+
+/* Фиксированная шапка — отступ первому разделу */
+.courses-page{padding:140px 0 72px}
+
+/* Заголовок секции */
+.section__header{text-align:center; margin-bottom:18px}
+.section__title{margin:0 0 8px; font-size:28px; letter-spacing:-0.01em}
+.section__subtitle{margin:0; color:var(--muted)}
+
+/* Сетка карточек */
+.courses__grid{
+  display:grid; gap:18px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Карточка курса */
+.course__card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.03);
+  border-radius:12px; overflow:hidden; position:relative;
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s, border-color .18s;
+}
+.course__card:hover{
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 18px 40px rgba(2,6,23,0.6);
+  border-color: rgba(0,255,204,0.12);
+}
+
+/* Вариант без фото — подчёркиваем контент и отключаем hover-тень */
+.course__card--disabled{opacity:.92}
+.course__card--disabled:hover{transform:none; box-shadow:none}
+
+/* Превью */
+.course__image{position:relative; overflow:hidden}
+.course__image img{display:block; width:100%; height:auto}
+.course__tag{
+  position:absolute; left:12px; top:12px;
+  padding:6px 10px; font-weight:700; font-size:12px;
+  background:rgba(0,0,0,0.35); color:#fff; border-radius:999px;
+  border:1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(4px);
+}
+
+/* Панель админ-действий поверх изображения (появляется при hover, если есть) */
+.course__actions{
+  position:absolute; right:10px; top:10px; display:flex; gap:8px;
+  opacity:0; transform: translateY(-6px);
+  transition:opacity .18s, transform .18s;
+}
+.course__image:hover .course__actions{opacity:1; transform:none}
+.btn-edit, .btn-delete{
+  width:34px; height:34px; border-radius:10px;
+  display:inline-flex; align-items:center; justify-content:center;
+  text-decoration:none; border:1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.35); color:#fff;
+  backdrop-filter: blur(4px);
+  transition: transform .12s, box-shadow .18s, border-color .18s, background .18s;
+}
+.btn-edit:hover{border-color: rgba(0,255,204,0.35); box-shadow: 0 0 0 4px rgba(0,255,204,0.08)}
+.btn-delete:hover{border-color: rgba(255,64,64,0.4); box-shadow: 0 0 0 4px rgba(255,64,64,0.08)}
+.btn-delete{cursor:pointer}
+
+/* Контент */
+.course__content{padding:16px}
+.course__title{margin:6px 0 8px; font-size:18px}
+.course__desc{margin:0 0 12px; color:var(--muted); font-size:14px}
+.course__meta{display:flex; gap:12px; color:var(--muted); font-size:13px; margin-bottom:12px}
+.course__meta i{opacity:.9; margin-right:6px}
+
+/* Низ карточки */
+.course__footer{display:flex; align-items:center; justify-content:space-between}
+.course__price{font-weight:800; color:var(--accent)}
+.btn.btn--primary{
+  background: linear-gradient(90deg, rgba(0,255,204,0.08), rgba(108,92,231,0.06));
+  color:var(--accent);
+  box-shadow: 0 6px 22px rgba(0,255,204,0.03), 0 0 18px rgba(0,255,204,0.04) inset;
+  position:relative; overflow:hidden;
+}
+.btn.btn--primary::after{
+  content:""; position:absolute; left:-40%; top:0; width:40%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  transform:skewX(-12deg); opacity:0; transition: all .55s;
+}
+.btn.btn--primary:hover::after{left:120%; opacity:1; transition: all .75s}
+
+/* ===== Admin: форма добавления курса ===== */
+.admin-section{padding:20px 0 90px}
+.admin__wrapper{
+  position:relative; max-width:900px; margin:0 auto;
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.03);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding:24px;
+  overflow:hidden;
+}
+.admin__wrapper::before{
+  content:""; position:absolute; inset:-1px; pointer-events:none;
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(0,255,204,0.05), transparent 40%),
+    radial-gradient(circle at 82% 78%, rgba(108,92,231,0.05), transparent 40%);
+  filter: blur(22px); opacity:.9;
+}
+.admin__title{margin:0 0 12px; font-size:22px; letter-spacing:-0.01em}
+
+/* Алерты */
+.alert-messages{margin-bottom:12px}
+.alert{
+  padding:10px 12px; border-radius:10px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.06);
+  color:var(--text);
+}
+.alert-success{border-color:rgba(0,255,204,0.25)}
+.alert-info{border-color:rgba(108,92,231,0.25)}
+.alert-warning{border-color:rgba(255,196,0,0.25)}
+.alert-error,.alert-danger{border-color:rgba(255,64,64,0.35)}
+
+/* Сетка формы */
+.admin__form{display:grid; gap:14px}
+.admin__form .form__row{display:grid; gap:14px; grid-template-columns:1fr 1fr}
+
+.admin__form .form__group label{
+  display:block; margin:4px 0 8px; color:var(--muted); font-weight:600; font-size:14px
+}
+.admin__form input[type="text"],
+.admin__form input[type="number"],
+.admin__form input[type="file"],
+.admin__form select,
+.admin__form textarea{
+  width:100%;
+  padding:12px 12px;
+  color:var(--text);
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:10px;
+  transition: box-shadow .18s, border-color .18s, background .18s;
+}
+.admin__form textarea{resize:vertical}
+.admin__form input::file-selector-button{
+  padding:8px 12px; margin-right:10px; border-radius:8px; border:0; cursor:pointer;
+  color:var(--accent);
+  background:linear-gradient(90deg, rgba(0,255,204,0.08), rgba(108,92,231,0.06));
+}
+.admin__form :is(input,select,textarea):focus{
+  outline:none; border-color: rgba(0,255,204,0.22);
+  box-shadow: 0 0 0 4px rgba(0,255,204,0.08);
+  background:rgba(255,255,255,0.03);
+}
+
+/* Кнопка сабмита */
+.btn.btn--primary.btn--block{width:100%; justify-content:center; padding:12px 14px; font-size:15px}
+
+/* ===== Header/Nav совместимость (если ещё не подключали эти стили) ===== */
+.logo img{height:34px; display:block}
+.nav__list{list-style:none; margin:0; padding:0; display:flex; gap:14px}
+.nav__link{
+  color:var(--muted);
+  text-decoration:none; padding:8px 10px; border-radius:8px; transition: all .18s;
+}
+.nav__link:hover{color:var(--text); background:var(--glass)}
+.nav__link.active{color:var(--text)}
+.header__auth .btn--login{color:var(--muted); background:transparent; border:1px solid transparent; padding:8px 10px}
+
+/* ===== Footer совместимость ===== */
+.footer{padding:28px 0; border-top:1px solid rgba(255,255,255,0.02); background:linear-gradient(180deg,transparent, rgba(0,0,0,0.02))}
+.footer__inner{display:flex; gap:22px; justify-content:space-between; align-items:flex-start}
+.footer__col{min-width:240px}
+.footer__title{margin:0 0 8px}
+.footer__contacts{list-style:none; padding:0; margin:0}
+.footer__contacts li{display:flex; align-items:center; gap:10px; color:var(--muted); padding:4px 0}
+.footer__text{color:var(--muted)}
+.footer__bottom{
+  margin-top:18px; padding-top:10px;
+  border-top:1px solid rgba(255,255,255,0.05);
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.footer__bottom a{color:var(--muted); text-decoration:none}
+.footer__bottom a:hover{color:var(--text)}
+
+/* ===== Адаптив ===== */
+@media (max-width: 1100px){
+  .courses__grid{grid-template-columns: repeat(2, 1fr)}
+}
+@media (max-width: 980px){
+  .container{padding:20px}
+  .nav{display:none}
+  .burger{display:block}
+}
+@media (max-width: 640px){
+  .courses-page{padding-top:110px}
+  .courses__grid{grid-template-columns: 1fr}
+  .admin__form .form__row{grid-template-columns:1fr}
+  .section__title{font-size:22px}
+}
+
+/* Доступность */
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important; transition:none!important}
+}
+
+/* ======================================
+   REGISTER PAGE (no HTML changes needed)
+   ====================================== */
+
+/* Переменные — ок, если уже объявлены выше */
+:root{
+  --bg:#071021;
+  --panel:#0b1220;
+  --muted:#9fb3c8;
+  --text:#e6eef8;
+  --accent:#00ffcc;
+  --accent-2:#6C5CE7;
+  --glass: rgba(255,255,255,0.04);
+  --card:#0e1722;
+  --radius:14px;
+  --shadow: 0 6px 20px rgba(2,6,23,0.6);
+}
+
+/* Фон/текст и отступ под фиксированную шапку */
+html,body{background: linear-gradient(180deg, var(--bg) 0%, #050816 100%); color:var(--text)}
+.auth-section{padding:120px 0 72px; position:relative}
+
+/* Карточка регистрации */
+.auth__wrapper{
+  position:relative;
+  max-width:720px; margin:0 auto;
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.03);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding:28px;
+  overflow:hidden;
+}
+.auth__wrapper::before{
+  content:""; position:absolute; inset:-1px; pointer-events:none;
+  background-image:
+    radial-gradient(circle at 22% 28%, rgba(0,255,204,0.05), transparent 40%),
+    radial-gradient(circle at 78% 72%, rgba(108,92,231,0.05), transparent 40%);
+  filter: blur(22px); opacity:.9;
+}
+
+/* Сообщения */
+.alert-messages{margin-bottom:14px}
+.alert{
+  padding:10px 12px; border-radius:10px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.06);
+  color:var(--text);
+}
+.alert-success{border-color:rgba(0,255,204,0.25)}
+.alert-info{border-color:rgba(108,92,231,0.25)}
+.alert-warning{border-color:rgba(255,196,0,0.25)}
+.alert-error,.alert-danger{border-color:rgba(255,64,64,0.35)}
+
+/* Заголовок */
+.auth__header{text-align:center; margin-bottom:18px}
+.auth__header h1{margin:0 0 6px; font-size:28px; letter-spacing:-0.01em}
+.auth__header p{margin:0; color:var(--muted)}
+
+/* Форма регистрации использует .admin__form — стилизуем её под auth */
+.admin__form{display:grid; gap:14px}
+.admin__form .form__row{display:grid; gap:14px; grid-template-columns:1fr 1fr}
+
+.admin__form .form__group{position:relative}
+.admin__form .form__group label{
+  display:block; margin:4px 0 8px;
+  color:var(--muted); font-weight:600; font-size:14px;
+}
+
+/* Иконки <i> уже в HTML — позиционируем поверх поля */
+.admin__form .form__group > i{
+  position:absolute; left:12px; top:50%; transform:translateY(-6px);
+  color:var(--muted); opacity:.9; pointer-events:none; z-index:1;
+}
+
+/* Поля */
+.admin__form input[type="text"],
+.admin__form input[type="email"],
+.admin__form input[type="password"],
+.admin__form select,
+.admin__form textarea{
+  width:100%;
+  padding:12px 12px 12px 40px; /* место под иконку */
+  color:var(--text);
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:10px;
+  transition: box-shadow .18s, border-color .18s, background .18s;
+}
+.admin__form select{padding-left:12px} /* у select нет иконки — стандартный отступ */
+.admin__form textarea{resize:vertical; padding-left:12px}
+.admin__form :is(input,select,textarea)::placeholder{color:#97a8bd}
+.admin__form :is(input,select,textarea):focus{
+  outline:none; border-color: rgba(0,255,204,0.22);
+  box-shadow: 0 0 0 4px rgba(0,255,204,0.08);
+  background:rgba(255,255,255,0.03);
+}
+
+/* Чекбокс условий */
+.form__checkbox{
+  display:flex; align-items:flex-start; gap:10px; color:var(--muted);
+  margin:6px 0 4px;
+}
+.form__checkbox input{accent-color: var(--accent); margin-top:3px}
+.form__checkbox a{color:var(--accent); text-decoration:none}
+.form__checkbox a:hover{text-decoration:underline}
+
+/* Кнопка регистрации */
+.btn.btn--primary.btn--block{
+  width:100%; justify-content:center; padding:12px 14px; font-size:15px;
+  background: linear-gradient(90deg, rgba(0,255,204,0.08), rgba(108,92,231,0.06));
+  color:var(--accent);
+  box-shadow: 0 6px 22px rgba(0,255,204,0.03), 0 0 18px rgba(0,255,204,0.04) inset;
+  position:relative; overflow:hidden;
+}
+.btn.btn--primary.btn--block::after{
+  content:""; position:absolute; left:-40%; top:0; width:40%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  transform:skewX(-12deg); opacity:0; transition: all .55s;
+}
+.btn.btn--primary.btn--block:hover::after{left:120%; opacity:1; transition: all .75s}
+
+/* Низ формы */
+.auth__footer{margin-top:2px; text-align:center; color:var(--muted)}
+.auth__footer a{color:var(--accent); text-decoration:none}
+.auth__footer a:hover{text-decoration:underline}
+
+/* Хедер/навигация/футер — совместимость (если уже подключены — дубликаты безвредны) */
+.logo img{height:34px; display:block}
+.nav__list{list-style:none; margin:0; padding:0; display:flex; gap:14px}
+.nav__link{
+  color:var(--muted); text-decoration:none; padding:8px 10px; border-radius:8px; transition: all .18s;
+}
+.nav__link:hover{color:var(--text); background:var(--glass)}
+.nav__link.active{color:var(--text)}
+.header__auth .btn--login{color:var(--muted); background:transparent; border:1px solid transparent; padding:8px 10px}
+
+.footer{padding:28px 0; border-top:1px solid rgba(255,255,255,0.02); background:linear-gradient(180deg,transparent, rgba(0,0,0,0.02))}
+.footer__inner{display:flex; gap:22px; justify-content:space-between; align-items:flex-start}
+.footer__col{min-width:240px}
+.footer__title{margin:0 0 8px}
+.footer__contacts{list-style:none; padding:0; margin:0}
+.footer__contacts li{display:flex; align-items:center; gap:10px; color:var(--muted); padding:4px 0}
+.footer__text{color:var(--muted)}
+.footer__bottom{
+  margin-top:18px; padding-top:10px;
+  border-top:1px solid rgba(255,255,255,0.05);
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+
+/* Адаптив */
+@media (max-width: 980px){
+  .container{padding:20px}
+  .nav{display:none}
+  .burger{display:block}
+}
+@media (max-width: 640px){
+  .auth__wrapper{padding:20px}
+  .auth__header h1{font-size:22px}
+  .admin__form .form__row{grid-template-columns:1fr}
+}
+
+/* Доступность */
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important; transition:none!important}
+}
+
+
+
+
+
+/* ==========================================
+   ACCOUNT PAGE — centered & tidy course grid
+   ========================================== */
+
+/* Небольшая корректировка сайдбара (чтобы всё было аккуратно) */
+:root{
+  --account-sidebar-w: 360px;   /* ширина левой колонки */
+  --account-sidebar-shift: -12px;/* лёгкий сдвиг влево (можно 0) */
+  --account-term-h: 168px;       /* высота терминала */
+}
+
+.account-page .account__content{
+  grid-template-columns: var(--account-sidebar-w) 1fr !important;
+  gap: 22px !important;
+  align-items: start;
+}
+
+/* профиль можно чуть подвинуть влево, чтобы визуально центр с сеткой совпал */
+.account-page .account__info{
+  transform: translateX(var(--account-sidebar-shift));
+}
+
+/* фиксированный терминал в профиле */
+.account-page .account__info .terminal{
+  width: calc(var(--account-sidebar-w) - 32px);
+  max-width: 100%;
+  margin: 0 12px 12px !important;
+}
+.account-page .account__info .terminal .terminal__body{
+  min-height: var(--account-term-h);
+  max-height: var(--account-term-h);
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+/* -------------------------
+   ГЛАВНОЕ: СЕТКА КАРТОЧЕК
+   ------------------------- */
+
+/* Центрируем контент второй колонки и ограничиваем её ширину,
+   чтобы всё смотрелось ровно и по центру */
+.account-page .account__main{
+  max-width: 860px;      /* оптимальная ширина для 2 карточек */
+  margin: 0 auto;        /* центрируем вторую колонку */
+  width: 100%;
+}
+
+/* Ровная 2-колоночная сетка, строго по центру контейнера */
+.account-page .courses__grid{
+  display: grid !important;
+  gap: 18px !important;
+
+  /* 2 колонки меньшего размера */
+  grid-template-columns: repeat(2, minmax(320px, 1fr)) !important;
+
+  /* центрируем треки сетки, чтобы не «тянуло вправо» */
+  justify-content: center;    /* центруем всю сетку по горизонтали */
+  align-content: start;       /* чтобы не прыгала по вертикали */
+  justify-items: stretch;     /* карточки растягиваются одинаково */
+  grid-auto-flow: row;        /* гарантируем построчную укладку */
+}
+
+/* Карточки — компактнее и одинаковой высоты (контент тянется),
+   чтобы сетка выглядела ровной */
+.account-page .course__card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 12px;
+  padding: 16px;                /* компактнее */
+  transition: transform .22s, box-shadow .22s;
+
+  display: flex;                /* для выравнивания по высоте */
+  flex-direction: column;
+  min-height: 100%;             /* тянем до высоты строки сетки */
+}
+.account-page .course__card:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(2,6,23,0.6);
+}
+
+/* Превью — широкое, но невысокое (не растит карточку), одинаковые пропорции */
+.account-page .course__image{
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.account-page .course__image img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Контент карточки — аккуратная типографика */
+.account-page .course__content{
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;               /* растягиваем контент, чтобы футер прилипал книзу */
+}
+.account-page .course__title{font-size: 18px; margin: 4px 0 6px}
+.account-page .course__desc{font-size: 14px; margin-bottom: 10px; color: var(--muted); line-height: 1.5}
+.account-page .course__meta{font-size: 13px; margin-bottom: 10px; color: var(--muted); display:flex; gap:12px; flex-wrap:wrap}
+
+/* Футер карточки всегда у низа */
+.account-page .course__footer{
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.account-page .course__footer .btn{padding: 9px 12px; font-size: 14px}
+
+/* Бейдж — компактный */
+.account-page .badge--success{
+  background: rgba(0,255,204,0.1);
+  color: var(--accent);
+  font-weight: 600;
+  padding: 5px 9px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+/* -------------------------
+   АДАПТИВ
+   ------------------------- */
+
+/* Чуть корректируем ширины на средних экранах */
+@media (max-width: 1280px){
+  .account-page .account__main{max-width: 780px}
+  .account-page .courses__grid{
+    grid-template-columns: repeat(2, minmax(300px, 1fr)) !important;
+    gap: 16px !important;
+  }
+  :root{
+    --account-sidebar-w: 340px;
+    --account-sidebar-shift: -8px;
+  }
+  .account-page .account__info .terminal{
+    width: calc(var(--account-sidebar-w) - 32px);
+  }
+}
+
+/* Планшеты/мобилки — одна колонка, всё по центру */
+@media (max-width: 980px){
+  .account-page .account__content{
+    grid-template-columns: 1fr !important;
+  }
+  .account-page .account__info{
+    transform: none;
+  }
+  .account-page .account__main{
+    max-width: 640px;
+  }
+  .account-page .courses__grid{
+    grid-template-columns: 1fr !important;
+    justify-content: center;   /* центр даже при одной колонке */
+  }
+}
+
+/* Очень широкие — чуть просторнее, но по-прежнему центр */
+@media (min-width: 1600px){
+  .account-page .account__main{max-width: 920px}
+  .account-page .courses__grid{
+    grid-template-columns: repeat(2, minmax(340px, 1fr)) !important;
+    gap: 20px !important;
+    justify-content: center;
+  }
+}
+
+
+
+
+
+
+
+/* ——— Базовая сцена и отступ для фиксированной шапки ——— */
+html,body{background: linear-gradient(180deg, var(--bg), #050816); color:var(--text)}
+.course-page{padding:120px 0 64px}
+
+/* ——— Шапка курса ——— */
+.course-header{margin-bottom:18px}
+.course-hero{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius: var(--radius);
+  padding:22px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.course-hero::before{
+  content:""; position:absolute; inset:-2px; pointer-events:none;
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(0,255,204,0.06), transparent 40%),
+    radial-gradient(circle at 82% 78%, rgba(108,92,231,0.06), transparent 40%);
+  filter: blur(20px); opacity:.9;
+}
+.course-hero h1{margin:0 0 8px; font-size:28px; letter-spacing:-0.01em}
+.course-description{margin:0; color:var(--muted)}
+.admin-actions{margin-top:14px}
+.admin-actions .btn{margin-right:8px}
+
+/* ——— Макет 2 колонки ——— */
+.course-content{
+  display:grid;
+  grid-template-columns: 320px 1fr;
+  gap:22px;
+  align-items:start;
+}
+
+/* ——— Сайдбар ——— */
+.course-sidebar{
+  position: sticky; top:88px;
+  align-self:start;
+  display:flex; flex-direction:column; gap:14px;
+}
+.sidebar-section{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:12px; padding:14px;
+}
+.sidebar-section h3{margin:0 0 10px; font-size:16px}
+.progress-stats{display:grid; gap:8px; color:var(--muted); font-size:14px}
+
+/* Прогресс: используем CSS-переменную —progress (0..100) если задашь в шаблоне.
+   Пример (опционально в Jinja): <div class="progress-bar" style="--progress: {{ progress_percentage }}"> */
+.progress-bar{
+  position:relative; height:10px; border-radius:999px; overflow:hidden;
+  background: rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.06);
+}
+.progress-fill{
+  height:100%; width: calc(var(--progress, 0) * 1%);
+  background: linear-gradient(90deg, rgba(0,255,204,0.25), rgba(108,92,231,0.25));
+  box-shadow: 0 0 18px rgba(0,255,204,0.25);
+  transition: width .6s ease;
+}
+
+/* ——— Список модулей/уроков ——— */
+.modules-list{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:12px; padding:12px;
+}
+.module-item + .module-item{border-top:1px solid rgba(255,255,255,0.06); margin-top:10px; padding-top:10px}
+.module-title{
+  display:flex; align-items:center; gap:8px; margin:0 0 6px; font-size:15px;
+}
+.module-title i{color:var(--accent-2)}
+.module-desc{margin:0 0 8px; color:var(--muted); font-size:14px}
+
+/* Уроки */
+.lessons-list{display:grid; gap:8px}
+.lesson-link{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:10px 12px; border-radius:10px; text-decoration:none;
+  color:var(--text);
+  background: rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06);
+  transition: transform .18s, background .18s, border-color .18s;
+}
+.lesson-link:hover{transform: translateX(4px); background: rgba(255,255,255,0.03); border-color: rgba(0,255,204,0.18)}
+.lesson-link i{margin-right:auto; color:var(--muted)}
+
+/* Типы уроков */
+.lesson-lecture i{color:#9fb3c8}
+.lesson-test i{color:#ffb86b}
+
+/* Завершённый урок */
+.lesson-link.completed{
+  background: rgba(0,255,204,0.06);
+  border-color: rgba(0,255,204,0.18);
+}
+.lesson-link .lesson-status{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:20px; height:20px;
+  color:var(--accent); background:rgba(0,255,204,0.15);
+  border:1px solid rgba(0,255,204,0.28); border-radius:50%;
+}
+
+/* ——— Основная колонка ——— */
+.course-main{display:grid; gap:18px}
+
+/* Welcome/Intro */
+.welcome-message{
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:12px; padding:18px;
+}
+.welcome-message h2{margin:0 0 8px; font-size:22px}
+.welcome-message p{margin:0 0 12px; color:var(--muted)}
+.content-stats{
+  display:grid; gap:12px; grid-template-columns: repeat(3, 1fr);
+}
+.stat-card{
+  display:grid; place-items:center; gap:6px; padding:14px;
+  border-radius:12px;
+  background: linear-gradient(180deg, rgba(0,255,204,0.025), rgba(108,92,231,0.02));
+  border:1px solid rgba(255,255,255,0.04);
+}
+.stat-card i{font-size:18px; color:var(--accent)}
+.stat-card h3{margin:0; font-size:20px}
+.stat-card p{margin:0; color:var(--muted); font-size:13px}
+
+/* Панель преподавателя */
+.teacher-dashboard{
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:12px; padding:18px;
+}
+.teacher-dashboard h2{margin:0 0 10px; font-size:20px}
+.teacher-actions{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px}
+.teacher-actions .btn{padding:10px 12px}
+.progress-overview h3{margin:0 0 6px; font-size:16px}
+.progress-overview p{margin:0; color:var(--muted)}
+
+/* ——— Footer совместимость ——— */
+.footer{margin-top:24px; border-top:1px solid rgba(255,255,255,0.02)}
+
+/* ——— Hover/Focus приятности ——— */
+.btn.btn--primary:hover{filter:brightness(1.08)}
+.btn.btn--secondary:hover{border-color:rgba(255,255,255,0.12)}
+
+/* ——— Адаптив ——— */
+@media (max-width: 1180px){
+  .course-content{grid-template-columns: 280px 1fr}
+}
+@media (max-width: 980px){
+  .container{padding:20px}
+  .course-page{padding-top:100px}
+  .course-content{grid-template-columns: 1fr}
+  .course-sidebar{position:static}
+  .content-stats{grid-template-columns: 1fr 1fr}
+}
+@media (max-width: 640px){
+  .content-stats{grid-template-columns: 1fr}
+  .course-hero h1{font-size:22px}
+}
+
+/* ——— Предпочтения доступности ——— */
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important; animation:none!important}
+}
+
+
+
+/* ==========================================
+   COURSE PAGE — CyberLab theme (no HTML edits)
+   ========================================== */
+
+/* Базовый отступ под фиксированную шапку */
+.course-page{padding-top:110px}
+
+/* -----------------
+   HERO блока курса
+   ----------------- */
+.course-hero{
+  position:relative;
+  padding: 8px 0 22px;
+}
+.course-hero .container{position:relative}
+.course-hero__inner{
+  display:grid; gap:24px;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items:center;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+.course-hero__inner::before{
+  content:""; position:absolute; inset:-2px; pointer-events:none;
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(0,255,204,0.06), transparent 40%),
+    radial-gradient(circle at 82% 78%, rgba(108,92,231,0.06), transparent 40%);
+  filter: blur(20px); opacity:.9;
+}
+
+.course-hero__content{position:relative; z-index:1}
+.course__tag{
+  display:inline-block;
+  padding:6px 10px; border-radius:999px;
+  background:rgba(0,0,0,0.35); color:#fff; font-weight:700; font-size:12px;
+  border:1px solid rgba(255,255,255,0.15); backdrop-filter: blur(4px);
+  margin-bottom:10px;
+}
+.course__tag--free{background: rgba(0,255,204,0.18); color:#002c26; border-color: rgba(0,255,204,0.35)}
+
+.course-hero__title{margin:0 0 8px; font-size:28px; letter-spacing:-0.01em}
+.course-hero__subtitle{margin:0 0 14px; color:var(--muted); line-height:1.55}
+
+.course-hero__meta{
+  display:flex; flex-wrap:wrap; gap:12px 16px;
+  color:var(--muted); font-size:14px; margin-bottom:14px;
+}
+.course-hero__meta-item{display:flex; align-items:center; gap:8px}
+.course-hero__meta-item i{color:var(--accent-2)}
+
+.course-hero__price{
+  font-weight:800; font-size:22px; color:var(--accent);
+  display:inline-block; padding:8px 12px; border-radius:12px;
+  background: linear-gradient(90deg, rgba(0,255,204,0.08), rgba(108,92,231,0.06));
+  border:1px solid rgba(0,255,204,0.15);
+  margin-bottom:12px;
+}
+
+.course-hero__buttons{display:flex; flex-wrap:wrap; gap:10px}
+
+/* Картинка справа */
+.course-hero__image{
+  position:relative; z-index:1; border-radius:12px; overflow:hidden;
+  aspect-ratio: 16 / 10; /* широкая, не высокая */
+}
+.course-hero__image img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  transform: scale(1.02);
+  transition: transform .7s ease;
+}
+.course-hero__image:hover img{transform: scale(1.05)}
+
+/* -------------------------
+   Основной центрированный контент
+   ------------------------- */
+.course-main-content{padding: 20px 0 8px}
+.course-centered-content{
+  max-width: 900px; margin: 0 auto; width:100%;
+  display:grid; gap:18px;
+}
+
+/* Секции */
+.course-section{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:12px; padding:18px;
+}
+.course-section__title{margin:0 0 10px; font-size:20px}
+.course-section__content{color:var(--text); line-height:1.6}
+.course-list{margin:0; padding-left:18px}
+.course-list li{margin:4px 0; color:var(--muted)}
+
+/* Пустое состояние (программа в разработке) */
+.empty-state{
+  text-align:center; padding:32px;
+  border:1px dashed rgba(255,255,255,0.12);
+  border-radius:12px; background: rgba(255,255,255,0.01);
+}
+.empty-state .empty-icon{font-size:28px; color:var(--muted); margin-bottom:8px}
+
+/* Результаты обучения */
+.course-results{
+  display:grid; gap:10px;
+}
+.result-item{
+  display:flex; align-items:center; gap:10px;
+  padding:10px 12px; border-radius:10px;
+  background: rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06);
+  color:var(--muted);
+}
+.result-item i{color:var(--accent)}
+
+/* -------------------------
+   «Боковина» ниже — тоже центр
+   ------------------------- */
+.course-sidebar-section{padding: 10px 0 28px}
+.sidebar-centered-content{max-width: 900px; margin: 0 auto; width:100%}
+.sidebar-grid{
+  display:grid; gap:16px;
+  grid-template-columns: 1fr 1fr;
+  align-items:start;
+}
+.sidebar-card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:12px; padding:16px;
+}
+.sidebar-card__title{margin:0 0 10px; font-size:18px}
+.sidebar-features{list-style:none; margin:0; padding:0; display:grid; gap:10px}
+.sidebar-feature{display:flex; gap:10px; align-items:center; color:var(--muted)}
+.sidebar-feature__icon{
+  width:34px; height:34px; border-radius:10px; display:grid; place-items:center;
+  background: linear-gradient(180deg, rgba(0,255,204,0.08), rgba(108,92,231,0.06));
+  border:1px solid rgba(255,255,255,0.06);
+  color: var(--accent);
+}
+
+.mentor-info h4{margin:0 0 4px; font-size:16px}
+.mentor-info p{margin:0; color:var(--muted)}
+
+/* -------------------------
+   Кнопки (используют общий стиль)
+   ------------------------- */
+.btn.btn--large{padding:12px 18px; font-size:16px}
+
+/* -------------------------
+   Адаптив
+   ------------------------- */
+@media (max-width: 1080px){
+  .course-hero__inner{
+    grid-template-columns: 1fr;
+  }
+  .course-hero__image{order:-1; aspect-ratio: 16 / 9}
+}
+
+@media (max-width: 980px){
+  .container{padding:20px}
+  .course-page{padding-top:96px}
+  .course-centered-content,
+  .sidebar-centered-content{max-width: 760px}
+  .sidebar-grid{grid-template-columns: 1fr}
+}
+
+@media (max-width: 640px){
+  .course-hero__title{font-size:22px}
+  .course-hero__subtitle{font-size:15px}
+  .course-hero__price{font-size:20px}
+}
+
+/* Доступность */
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important; animation:none!important}
+}
+
+
+
+
+/* ==========================================
+   TEACHERS PAGE — идентично карточкам курсов
+   ========================================== */
+
+/* Отступ под фикс-шапку и заголовок секции */
+.teachers-page{padding:140px 0 72px}
+.teachers-page .section__header{text-align:center; margin-bottom:18px}
+.teachers-page .section__title{margin:0 0 8px; font-size:28px; letter-spacing:-0.01em}
+.teachers-page .section__subtitle{margin:0; color:var(--muted)}
+
+/* Контейнер как у курсов */
+.teachers-page .container{max-width:1140px; margin:0 auto; padding:28px}
+
+/* Сетка карточек — как courses__grid */
+.teachers__grid{
+  display:grid; gap:18px;
+  grid-template-columns: repeat(3, 1fr);
+  align-items:start;
+}
+
+/* Карточка преподавателя = курс: стекло, тень, hover */
+.teacher__card{
+  position:relative; /* для абсолютного позиционирования админ-кнопок */
+  display:flex; flex-direction:column;
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.03);
+  border-radius:12px; overflow:hidden;
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s, border-color .18s;
+  min-height:100%; /* чтобы тянуться по высоте в ряду */
+}
+.teacher__card:hover{
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 18px 40px rgba(2,6,23,0.6);
+  border-color: rgba(0,255,204,0.12);
+}
+
+/* Превью сверху — одинаковая высота у всех */
+.teacher__photo{
+  position:relative; overflow:hidden;
+  aspect-ratio: 16 / 9;            /* фиксируем высоту */
+  background: rgba(255,255,255,0.02);
+}
+.teacher__photo img{
+  display:block; width:100%; height:100%; object-fit:cover;
+  transform: scale(1.01);
+  transition: transform .6s ease;
+}
+.teacher__card:hover .teacher__photo img{transform: scale(1.05)}
+
+/* ==== Админ-кнопки над фото (как у курсов) ==== */
+.teacher__card .course__actions{
+  position:absolute; right:10px; top:10px; display:flex; gap:8px;
+  opacity:0; transform: translateY(-6px);
+  transition:opacity .18s, transform .18s;
+  z-index:3;           /* выше фото */
+  pointer-events:none; /* чтобы не мешать до hover */
+}
+.teacher__card:hover .course__actions{
+  opacity:1; transform:none; pointer-events:auto;
+}
+.teacher__card .btn-edit, 
+.teacher__card .btn-delete{
+  width:34px; height:34px; border-radius:10px;
+  display:inline-flex; align-items:center; justify-content:center;
+  text-decoration:none; border:1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.35); color:#fff;
+  backdrop-filter: blur(4px);
+  transition: transform .12s, box-shadow .18s, border-color .18s, background .18s;
+}
+.teacher__card .btn-edit:hover{border-color: rgba(0,255,204,0.35); box-shadow: 0 0 0 4px rgba(0,255,204,0.08)}
+.teacher__card .btn-delete:hover{border-color: rgba(255,64,64,0.4); box-shadow: 0 0 0 4px rgba(255,64,64,0.08)}
+.teacher__card .btn-delete{cursor:pointer}
+
+/* Контент — как у course__content */
+.teacher__info{
+  display:flex; flex-direction:column; flex:1 1 auto; /* тянем контент, чтобы футер был внизу */
+  padding:16px;
+}
+.teacher__name{
+  margin:6px 0 8px; font-size:18px; /* как course__title */
+}
+.teacher__bio{
+  margin:0 0 12px; color:var(--muted); font-size:14px; line-height:1.55; /* как course__desc */
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; /* выравниваем высоты в ряду */
+}
+.teacher__meta{
+  display:flex; gap:12px; color:var(--muted); font-size:13px; margin-bottom:12px; flex-wrap:wrap; /* как course__meta */
+}
+.teacher__meta i{opacity:.9; margin-right:6px}
+
+/* Низ карточки — кнопка как у курса */
+.teacher__info .btn{padding:9px 12px; font-size:14px; margin-top:auto} /* прижим к низу */
+.teacher__info .btn.btn--primary{
+  background: linear-gradient(90deg, rgba(0,255,204,0.08), rgba(108,92,231,0.06));
+  color:var(--accent);
+  box-shadow: 0 6px 22px rgba(0,255,204,0.03), 0 0 18px rgba(0,255,204,0.04) inset;
+  position:relative; overflow:hidden;
+}
+.teacher__info .btn.btn--primary::after{
+  content:""; position:absolute; left:-40%; top:0; width:40%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  transform:skewX(-12deg); opacity:0; transition: all .55s;
+}
+.teacher__info .btn.btn--primary:hover::after{left:120%; opacity:1; transition: all .75s}
+
+/* === Адаптив — как у курсов (3 → 2 → 1) === */
+@media (max-width:1180px){
+  .teachers__grid{grid-template-columns: repeat(2, 1fr)}
+}
+@media (max-width:680px){
+  .teachers__grid{grid-template-columns: 1fr}
+}
+
+
+/* ==========================================
+   CONTACTS PAGE — CyberLab theme
+   ========================================== */
+
+/* Отступ под фикс-хедер и общий ритм */
+.contacts-page{padding:140px 0 72px}
+
+/* Заголовок секции */
+.contacts-page .section__header{text-align:center; margin-bottom:22px}
+.contacts-page .section__title{margin:0 0 6px; font-size:28px; letter-spacing:-0.01em}
+.contacts-page .section__subtitle{margin:0; color:var(--muted)}
+
+/* Контейнер */
+.contacts-page .container{max-width:1140px; margin:0 auto; padding:28px}
+
+/* ======================
+   Макет контента
+   ====================== */
+.contacts__content{
+  display:grid; gap:18px;
+  grid-template-columns: 1.05fr 0.95fr; /* инфо + форма */
+  align-items:start;
+}
+
+/* Левая колонка: о компании + способы связи */
+.contacts__info{display:grid; gap:18px}
+
+/* Карточки-боксы (общий стиль “стекло”) */
+.company__about,
+.contacts__details,
+.contacts__form{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:12px; padding:18px;
+  box-shadow: var(--shadow);
+}
+
+/* Подзаголовки блоков */
+.company__about h2,
+.contacts__details h2,
+.contacts__form h2{
+  margin:0 0 10px; font-size:20px; letter-spacing:-0.01em
+}
+
+/* Текст “О компании” */
+.company__about p{margin:8px 0; color:var(--muted); line-height:1.6}
+
+/* ======================
+   Карточки контактов
+   ====================== */
+.contacts__details{display:grid; gap:12px}
+.contact__card{
+  display:flex; gap:12px; align-items:flex-start;
+  padding:12px; border-radius:12px;
+  background: rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.04);
+  transition: transform .22s, box-shadow .22s, border-color .18s, background .18s;
+}
+.contact__card:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(2,6,23,0.55);
+  border-color: rgba(0,255,204,0.14);
+  background: linear-gradient(180deg, rgba(0,255,204,0.02), rgba(108,92,231,0.02));
+}
+
+/* Иконка */
+.contact__icon{
+  flex:0 0 40px; width:40px; height:40px; border-radius:10px;
+  display:grid; place-items:center;
+  color:var(--accent);
+  background: linear-gradient(180deg, rgba(0,255,204,0.08), rgba(108,92,231,0.06));
+  border:1px solid rgba(255,255,255,0.06);
+}
+.contact__icon i{font-size:16px}
+
+/* Текст карточки */
+.contact__text h3{margin:0 0 4px; font-size:16px}
+.contact__text p{margin:2px 0; color:var(--muted)}
+
+/* ======================
+   Форма “Напишите нам”
+   ====================== */
+.contacts__form .admin__form{display:grid; gap:12px}
+.contacts__form .form__group label{
+  display:block; margin-bottom:6px; color:var(--muted); font-size:14px
+}
+.contacts__form input[type="text"],
+.contacts__form input[type="email"],
+.contacts__form select,
+.contacts__form textarea{
+  width:100%; border-radius:10px; padding:12px 12px;
+  color:var(--text); background: rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06);
+  transition: border-color .18s, box-shadow .18s;
+}
+.contacts__form textarea{min-height:140px; resize:vertical}
+
+.contacts__form input:focus,
+.contacts__form select:focus,
+.contacts__form textarea:focus{
+  outline:none;
+  border-color: rgba(0,255,204,0.22);
+  box-shadow: 0 0 0 3px rgba(0,255,204,0.08);
+}
+
+/* Кнопка отправки — общий primary */
+.contacts__form .btn--block{width:100%; padding:12px 14px; font-weight:700}
+
+/* ======================
+   Карта
+   ====================== */
+.contacts__map{
+  margin-top:18px;
+  border-radius:14px; overflow:hidden;
+  border:1px solid rgba(255,255,255,0.04);
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  box-shadow: var(--shadow);
+}
+.contacts__map iframe{
+  display:block; width:100%; height:420px; border:0;
+}
+
+/* ======================
+   Декоративные мелочи
+   ====================== */
+.contacts-page .section__header::after{
+  content:""; display:block; height:1px; width:86px; margin:12px auto 0;
+  background: linear-gradient(90deg, transparent, rgba(0,255,204,0.35), transparent);
+  opacity:.8;
+}
+
+/* ======================
+   Адаптив
+   ====================== */
+@media (max-width: 1100px){
+  .contacts__content{grid-template-columns: 1fr} /* в столбик */
+  .contacts__map iframe{height:380px}
+}
+@media (max-width: 720px){
+  .contacts-page .container{padding:20px}
+  .contacts__map iframe{height:340px}
+}
+
+/* ======================
+   Уважение prefers-reduced-motion
+   ====================== */
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important; animation:none!important}
+}
+
+
+/* ==========================================
+   REVIEWS PAGE — CyberLab theme
+   ========================================== */
+
+/* Отступ под фикс-хедер и общий ритм */
+.reviews-page{padding:140px 0 72px}
+
+/* Заголовок секции */
+.reviews-page .section__header{text-align:center; margin-bottom:22px}
+.reviews-page .section__title{margin:0 0 8px; font-size:28px; letter-spacing:-0.01em}
+.reviews-page .section__subtitle{margin:0; color:var(--muted)}
+.reviews-page .section__header::after{
+  content:""; display:block; height:1px; width:86px; margin:12px auto 0;
+  background: linear-gradient(90deg, transparent, rgba(0,255,204,0.35), transparent);
+  opacity:.8;
+}
+
+/* Контейнер */
+.reviews-page .container{max-width:1140px; margin:0 auto; padding:28px}
+
+/* ======================
+   Сетка карточек
+   ====================== */
+.reviews__grid{
+  display:grid; gap:18px;
+  grid-template-columns: repeat(3, 1fr);
+  align-items:stretch;
+}
+
+/* ======================
+   Карточка отзыва
+   ====================== */
+.review__card{
+  position:relative;
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.03);
+  border-radius:12px; overflow:hidden;
+  box-shadow: var(--shadow);
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s, border-color .18s;
+}
+.review__card:hover{
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 18px 40px rgba(2,6,23,0.6);
+  border-color: rgba(0,255,204,0.12);
+}
+
+/* Неоновая рамка-подсветка по краям при ховере */
+.review__card::before{
+  content:"";
+  position:absolute; inset:0; pointer-events:none; opacity:0;
+  background:
+    radial-gradient(120px 60px at 20% 0%, rgba(0,255,204,0.08), transparent 60%),
+    radial-gradient(120px 60px at 80% 100%, rgba(108,92,231,0.08), transparent 60%);
+  transition: opacity .28s;
+}
+.review__card:hover::before{opacity:1}
+
+/* Кавычки-декор */
+.review__card::after{
+  content:"“";
+  position:absolute; left:12px; top:6px; font-size:64px; line-height:1;
+  color: rgba(0,255,204,0.08); font-weight:800; pointer-events:none;
+}
+
+/* Контент карточки — выравниваем по высоте */
+.review__content{
+  position:relative; z-index:1;
+  display:flex; flex-direction:column; min-height:220px;
+  padding:18px 16px 14px 16px;
+}
+
+/* Шапка отзыва: имя + курс-бейдж */
+.review__header{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  margin-bottom:8px;
+}
+.review__name{font-size:18px; margin:0}
+.review__course{
+  font-size:12px; font-weight:700; color:#fff;
+  padding:6px 10px; border-radius:999px;
+  background: rgba(0,0,0,0.35);
+  border:1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(4px);
+  white-space:nowrap;
+}
+
+/* Текст отзыва: читаемо и ровно по высоте */
+.review__text{
+  color:var(--muted); line-height:1.55; margin:0 0 10px;
+  display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;
+}
+
+/* Дата — приглушённая, «прилипает» к низу */
+.review__date{
+  margin-top:auto;
+  font-size:13px; color:var(--muted);
+  border-top:1px dashed rgba(255,255,255,0.08);
+  padding-top:10px;
+}
+
+/* ======================
+   Блок “Войдите, чтобы оставить отзыв”
+   ====================== */
+.auth-required{
+  margin-top:18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:12px; overflow:hidden;
+  box-shadow: var(--shadow);
+}
+.auth-required__content{
+  padding:22px; text-align:center;
+}
+.auth-required__content h2{margin:0 0 6px; font-size:22px}
+.auth-required__content p{margin:0 0 10px; color:var(--muted)}
+.auth-required__content .btn{padding:10px 14px; font-weight:700}
+
+/* ======================
+   Форма отправки отзыва (для авторизованных)
+   ====================== */
+.review-form{
+  margin-top:18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:12px; padding:18px;
+  box-shadow: var(--shadow);
+}
+.review-form h2{margin:0 0 10px; font-size:20px}
+
+.review-form .admin__form{display:grid; gap:12px}
+.review-form .form__group label{
+  display:block; margin-bottom:6px; color:var(--muted); font-size:14px
+}
+.review-form input[type="text"],
+.review-form select,
+.review-form textarea{
+  width:100%; border-radius:10px; padding:12px 12px;
+  color:var(--text); background: rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06);
+  transition: border-color .18s, box-shadow .18s;
+}
+.review-form textarea{min-height:140px; resize:vertical}
+.review-form input:focus,
+.review-form select:focus,
+.review-form textarea:focus{
+  outline:none;
+  border-color: rgba(0,255,204,0.22);
+  box-shadow: 0 0 0 3px rgba(0,255,204,0.08);
+}
+.review-form .btn--block{width:100%; padding:12px 14px; font-weight:700}
+
+/* ======================
+   Адаптив (3 → 2 → 1)
+   ====================== */
+@media (max-width:1180px){
+  .reviews__grid{grid-template-columns: repeat(2, 1fr)}
+}
+@media (max-width:680px){
+  .reviews__grid{grid-template-columns: 1fr}
+  .reviews-page .container{padding:20px}
+}
+
+/* ======================
+   Уважение prefers-reduced-motion
+   ====================== */
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important; animation:none!important}
+}
+
+
+
+
+
+/* ==========================================
+   ADMIN USERS PAGE — CyberLab theme
+   ========================================== */
+
+/* Отступ под фикс-шапку и общий ритм */
+.admin-users-page{padding:140px 0 72px}
+.admin-users-page .container{max-width:1140px;margin:0 auto;padding:28px}
+
+/* Заголовок */
+.admin-header{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin-bottom:18px;
+}
+.admin-header h1{margin:0;font-size:28px;letter-spacing:-0.01em}
+.admin-header::after{
+  content:"";flex:1;height:1px;margin-left:12px;
+  background:linear-gradient(90deg, transparent, rgba(0,255,204,0.35), transparent);
+  opacity:.8;
+}
+
+/* Секции (студенты/преподаватели) */
+.user-section{margin-top:18px}
+.section-title{
+  display:flex;align-items:center;gap:10px;margin:0 0 10px;font-size:20px;
+}
+.section-title .badge{
+  display:inline-block;padding:4px 10px;border-radius:999px;
+  background:rgba(0,255,204,0.08); color:var(--accent); font-weight:800; font-size:12px;
+  border:1px solid rgba(0,255,204,0.18);
+}
+
+/* Обёртка для горизонтального скролла на узких экранах */
+.table-responsive{position:relative}
+.table-responsive::before,
+.table-responsive::after{
+  content:"";position:absolute;top:0;bottom:0;width:12px;pointer-events:none;z-index:2;
+}
+.table-responsive::before{
+  left:0;background:linear-gradient(90deg, var(--card, #0e1722), transparent);
+  opacity:.6;
+}
+.table-responsive::after{
+  right:0;background:linear-gradient(270deg, var(--card, #0e1722), transparent);
+  opacity:.6;
+}
+
+/* Таблица */
+.user-table{
+  width:100%; border-collapse:separate; border-spacing:0; min-width:860px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04); border-radius:12px; overflow:hidden;
+  box-shadow: var(--shadow);
+}
+
+/* Заголовок таблицы — липкий */
+.user-table thead th{
+  position:sticky; top:0; z-index:1;
+  background:linear-gradient(180deg, rgba(0,0,0,0.28), rgba(255,255,255,0.02));
+  backdrop-filter: blur(6px);
+  color:var(--muted); font-weight:700; text-align:left;
+  padding:12px 14px; font-size:13px; border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.user-table thead th:first-child{border-top-left-radius:12px}
+.user-table thead th:last-child{border-top-right-radius:12px}
+
+/* Ячейки */
+.user-table td{
+  padding:12px 14px; font-size:14px; border-bottom:1px solid rgba(255,255,255,0.04);
+  vertical-align:top;
+}
+
+/* Зебра + hover строки */
+.user-table tbody tr:nth-child(odd){background:rgba(255,255,255,0.01)}
+.user-table tbody tr:hover{
+  background:linear-gradient(90deg, rgba(0,255,204,0.04), rgba(108,92,231,0.03));
+  box-shadow: inset 0 0 0 9999px rgba(0,0,0,0); /* без сдвига */
+}
+
+/* Статусные бейджи */
+.status-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.03); color:#fff;
+}
+.status-student{color:var(--accent); border-color:rgba(0,255,204,0.22); background:rgba(0,255,204,0.06)}
+.status-teacher{color:#c9b6ff; border-color:rgba(108,92,231,0.28); background:rgba(108,92,231,0.08)}
+.status-admin{color:#ffd76b; border-color:rgba(255,215,107,0.28); background:rgba(255,215,107,0.08)}
+
+/* Список курсов у пользователя */
+.courses-list{display:flex;flex-direction:column;gap:8px}
+.course-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:10px;
+  background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06);
+  color:var(--text); font-size:13px;
+}
+.course-item-free{border-color:rgba(0,255,204,0.24); background:rgba(0,255,204,0.05)}
+.free-badge{
+  margin-left:auto; font-size:11px; font-weight:800; color:var(--accent);
+  padding:4px 8px; border-radius:999px; border:1px solid rgba(0,255,204,0.24); background:rgba(0,255,204,0.06);
+}
+.empty-courses{color:var(--muted); font-style:italic}
+
+/* Курсы у преподавателя */
+.teacher-courses{display:flex;flex-direction:column;gap:8px}
+.assigned-course{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:10px;
+  background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06);
+  color:var(--text); font-size:13px;
+}
+.remove-course-btn{
+  margin-left:auto; width:28px;height:28px;border-radius:8px;display:inline-grid;place-items:center;
+  background:rgba(0,0,0,0.28); color:#fff; border:1px solid rgba(255,255,255,0.14);
+  transition:transform .12s, box-shadow .18s, border-color .18s, background .18s;
+  cursor:pointer;
+}
+.remove-course-btn:hover{border-color:rgba(255,64,64,0.5); box-shadow:0 0 0 4px rgba(255,64,64,0.12)}
+.remove-course-btn i{font-size:12px}
+
+/* Действия в таблице */
+.user-actions{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.btn-assign{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;
+  font-weight:700;font-size:12px; cursor:pointer;
+  color:var(--accent);
+  background:linear-gradient(90deg, rgba(0,255,204,0.08), rgba(108,92,231,0.06));
+  border:1px solid rgba(0,255,204,0.22);
+  transition:transform .12s, box-shadow .18s, opacity .12s;
+}
+.btn-assign:hover{box-shadow:0 6px 22px rgba(0,255,204,0.08) inset}
+.btn-assign i{font-size:12px}
+
+.btn-edit, .btn-delete{
+  width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;
+  text-decoration:none;border:1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.35); color:#fff;
+  backdrop-filter: blur(4px);
+  transition: transform .12s, box-shadow .18s, border-color .18s, background .18s;
+}
+.btn-edit:hover{border-color: rgba(0,255,204,0.35); box-shadow: 0 0 0 4px rgba(0,255,204,0.08)}
+.btn-delete:hover{border-color: rgba(255,64,64,0.4); box-shadow: 0 0 0 4px rgba(255,64,64,0.08)}
+.btn-delete{cursor:pointer}
+
+/* Алёрты (флэш-сообщения) — компактные */
+.alert-messages{margin:8px 0 0;display:grid;gap:8px}
+.alert{
+  padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.02);font-size:14px
+}
+.alert-success{border-color:rgba(0,255,204,0.24); background:rgba(0,255,204,0.06); color:var(--accent)}
+.alert-danger{border-color:rgba(255,64,64,0.24); background:rgba(255,64,64,0.06)}
+.alert-warning{border-color:rgba(255,215,107,0.24); background:rgba(255,215,107,0.06)}
+.alert-info{border-color:rgba(108,92,231,0.24); background:rgba(108,92,231,0.06)}
+
+/* Кнопки в таблицах не «прыгают» при клике */
+.btn-assign:active, .btn-edit:active, .btn-delete:active, .remove-course-btn:active{transform:translateY(1px)}
+
+/* ======================
+   Адаптив
+   ====================== */
+@media (max-width: 1200px){
+  .admin-users-page .container{padding:22px}
+}
+@media (max-width: 980px){
+  .table-responsive{overflow:auto;border-radius:12px}
+  .user-table{min-width:880px}
+}
+@media (max-width: 640px){
+  .admin-header h1{font-size:22px}
+  .section-title{font-size:18px}
+  .user-table{min-width:760px}
+}
+
+/* ======================
+   Уважение prefers-reduced-motion
+   ====================== */
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important;animation:none!important}
+}
+
+
+
+/* ==========================================
+   MODAL — CyberLab theme
+   ========================================== */
+
+/* Фон модального окна */
+.modal {
+  display:none; /* включается JS */
+  position:fixed; z-index:1000;
+  left:0; top:0; width:100%; height:100%;
+  background:rgba(2,6,23,0.85);
+  backdrop-filter:blur(8px);
+  overflow:auto;
+  animation: modalFadeIn .25s ease forwards;
+}
+
+/* Анимация появления */
+@keyframes modalFadeIn {
+  from {opacity:0; transform:scale(0.98);}
+  to {opacity:1; transform:scale(1);}
+}
+
+/* Контентная часть */
+.modal-content {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:14px;
+  max-width:480px; margin:10% auto;
+  padding:0;
+  box-shadow:0 20px 60px rgba(0,0,0,0.75);
+  color:var(--text);
+  transform:translateY(-8px);
+  animation: modalSlideIn .35s ease forwards;
+}
+@keyframes modalSlideIn {
+  from {opacity:0; transform:translateY(-12px);}
+  to {opacity:1; transform:translateY(0);}
+}
+
+/* Заголовок */
+.modal-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 18px;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  background:linear-gradient(90deg, rgba(0,255,204,0.05), rgba(108,92,231,0.04));
+}
+.modal-header h3 {
+  margin:0; font-size:18px; font-weight:700;
+  letter-spacing:-0.01em;
+}
+.close {
+  font-size:22px; cursor:pointer; color:var(--muted);
+  transition:color .18s, transform .18s;
+}
+.close:hover {color:var(--accent); transform:rotate(90deg);}
+
+/* Тело модалки */
+.modal-body {padding:18px; display:grid; gap:16px;}
+.modal-body form {display:grid; gap:14px;}
+
+/* Поля формы */
+.form-group label {
+  display:block; margin-bottom:6px; font-size:14px; color:var(--muted);
+}
+.form-control, .form-group select {
+  width:100%;
+  border-radius:10px; padding:12px 12px;
+  color:var(--text);
+  background: rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06);
+  transition:border-color .18s, box-shadow .18s;
+}
+.form-control:focus, .form-group select:focus {
+  outline:none;
+  border-color:rgba(0,255,204,0.25);
+  box-shadow:0 0 0 3px rgba(0,255,204,0.08);
+}
+
+/* Нижняя панель кнопок */
+.form-actions {
+  display:flex; justify-content:flex-end; gap:10px;
+  margin-top:10px;
+}
+.form-actions .btn {padding:10px 14px; font-weight:700;}
+.form-actions .btn--secondary {
+  background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  color:var(--muted); border:1px solid rgba(255,255,255,0.04);
+}
+.form-actions .btn--secondary:hover {
+  color:var(--text); border-color:rgba(0,255,204,0.18);
+}
+
+/* Вспышка акцента при фокусе на модалке */
+.modal:focus-within .modal-content {
+  box-shadow:0 0 0 2px rgba(0,255,204,0.1), 0 16px 48px rgba(2,6,23,0.7);
+}
+
+/* Скролл внутри длинных форм */
+.modal-content::-webkit-scrollbar{width:6px;}
+.modal-content::-webkit-scrollbar-thumb{
+  background:rgba(0,255,204,0.2);border-radius:10px;
+}
+
+/* ======================
+   Адаптив
+   ====================== */
+@media (max-width:560px){
+  .modal-content{width:92%;margin-top:30%;padding:0;}
+  .modal-body{padding:16px;}
+}
+
+
+/* ==========================================
+   LESSON PAGE — CyberLab theme
+   ========================================== */
+
+/* Общий контейнер под фикс-хедер */
+.lesson-page{padding:140px 0 72px}
+.lesson-page .container{max-width:1140px;margin:0 auto;padding:28px}
+
+/* Хлебные крошки */
+.breadcrumb{
+  display:flex; gap:8px; align-items:center;
+  font-size:13px; color:var(--muted); margin:-6px 0 10px;
+}
+.breadcrumb a{
+  color:var(--muted); text-decoration:none; padding:4px 6px; border-radius:8px;
+  transition:background .18s,color .18s;
+}
+.breadcrumb a:hover{background:rgba(255,255,255,0.04); color:var(--text)}
+.breadcrumb span{opacity:.9}
+
+/* Заголовок лекции */
+.lesson-header{
+  display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+  padding:16px 18px; border-radius:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04);
+  box-shadow: var(--shadow);
+  margin-bottom:18px;
+}
+.lesson-header h1{margin:0;font-size:24px;letter-spacing:-0.01em}
+.lesson-header .course-name{
+  margin:0; color:var(--muted); font-weight:600; font-size:14px;
+}
+
+/* Основной блок контента */
+.lesson-content{
+  display:grid; gap:18px;
+}
+
+/* ======= ЛЕКЦИЯ ======= */
+.lecture-content{
+  display:grid; gap:16px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.03);
+  border-radius:12px; padding:16px;
+  box-shadow: var(--shadow);
+}
+
+/* Видео — адаптивное (16:9) */
+.video-wrapper{
+  position:relative; width:100%; aspect-ratio:16/9; overflow:hidden;
+  border-radius:10px; border:1px solid rgba(255,255,255,0.06);
+  background:#000;
+}
+.video-wrapper iframe{
+  position:absolute; inset:0; width:100%; height:100%; border:0;
+}
+
+/* Текст лекции — читабельная типографика и светлые коды */
+.text-content{
+  line-height:1.7; color:var(--text);
+}
+.text-content p{margin:0 0 12px}
+.text-content h2,.text-content h3,.text-content h4{margin:16px 0 8px}
+.text-content ul, .text-content ol{padding-left:20px;margin:10px 0}
+.text-content code{
+  font-family:"Fira Code", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08);
+  padding:2px 6px; border-radius:8px; font-size:90%;
+}
+.text-content pre{
+  margin:12px 0; padding:12px; overflow:auto;
+  background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.06); border-radius:10px;
+}
+.text-content pre code{background:transparent;border:0;padding:0}
+
+/* Бейдж завершения лекции */
+.completion-badge{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 12px; border-radius:999px; font-weight:800; font-size:13px;
+  color:var(--accent);
+  background:linear-gradient(90deg, rgba(0,255,204,0.08), rgba(108,92,231,0.06));
+  border:1px solid rgba(0,255,204,0.22);
+  width:max-content;
+}
+
+/* ======= ТЕСТ ======= */
+.test-content{
+  display:grid; gap:16px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.03);
+  border-radius:12px; padding:16px;
+  box-shadow: var(--shadow);
+}
+
+/* Инфо о тесте */
+.test-info h2{margin:0 0 6px;font-size:20px}
+.test-info p{margin:0 0 10px;color:var(--muted)}
+.attempts-info{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:6px 10px; border-radius:999px; font-size:12px; font-weight:700;
+  color:#ffd76b; background:rgba(255,215,107,0.08); border:1px solid rgba(255,215,107,0.22);
+}
+
+/* История попыток */
+.previous-results{margin-top:12px}
+.previous-results h3{margin:0 0 8px; font-size:16px}
+.attempt-result{
+  padding:10px 12px; border-radius:10px; margin-bottom:8px;
+  background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06);
+  font-weight:600;
+}
+.attempt-result.passed{color:var(--accent); border-color:rgba(0,255,204,0.22); background:rgba(0,255,204,0.06)}
+.attempt-result.failed{color:#ff9b9b; border-color:rgba(255,64,64,0.22); background:rgba(255,64,64,0.06)}
+
+/* Форма теста */
+.test-form{display:grid; gap:14px; margin-top:6px}
+.question{
+  background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06);
+  border-radius:12px; padding:12px;
+}
+.question h3{margin:0 0 8px; font-size:16px}
+.options{display:grid; gap:8px}
+.option{
+  display:flex; gap:10px; align-items:flex-start;
+  padding:8px 10px; border-radius:10px; cursor:pointer;
+  border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02);
+  transition:border-color .18s, background .18s, box-shadow .18s;
+}
+.option:hover{border-color:rgba(0,255,204,0.2); background:rgba(0,255,204,0.05)}
+.option input[type="radio"]{margin-top:3px}
+
+/* Кнопка отправки */
+.test-form .btn.btn--primary{margin-top:6px}
+
+/* ======= Общие элементы/алёрты на странице ======= */
+.alert-messages{margin:0 0 8px;display:grid;gap:8px}
+.alert{
+  padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.02);font-size:14px
+}
+.alert-success{border-color:rgba(0,255,204,0.24); background:rgba(0,255,255,0.06); color:var(--accent)}
+.alert-danger{border-color:rgba(255,64,64,0.24); background:rgba(255,64,64,0.06)}
+.alert-warning{border-color:rgba(255,215,107,0.24); background:rgba(255,215,107,0.06)}
+.alert-info{border-color:rgba(108,92,231,0.24); background:rgba(108,92,231,0.06)}
+
+/* ======================
+   Адаптив
+   ====================== */
+@media (max-width:1180px){
+  .lesson-page .container{padding:22px}
+}
+@media (max-width:740px){
+  .lesson-header{flex-direction:column; align-items:flex-start}
+  .lesson-header h1{font-size:20px}
+  .video-wrapper{aspect-ratio:16/9}
+}
+
+/* ======================
+   Уважение prefers-reduced-motion
+   ====================== */
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important;animation:none!important}
+}
+
+
+
+/* ==========================================
+   TEST RESULTS — CyberLab theme
+   ========================================== */
+
+.test-results-page{padding:140px 0 72px}
+.test-results-page .container{max-width:1140px;margin:0 auto;padding:28px}
+
+/* Заголовок страницы */
+.page-header{
+  display:flex; align-items:flex-start; gap:14px; flex-wrap:wrap;
+  margin-bottom:18px; padding:16px;
+  border-radius:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04);
+  box-shadow: var(--shadow);
+}
+.page-header h1{margin:0; font-size:22px; letter-spacing:-0.01em}
+.page-header p{margin:0; color:var(--muted)}
+
+/* Контент */
+.results-content{display:grid; gap:18px}
+
+/* Статистика сверху */
+.stats-overview{
+  display:grid; gap:14px; grid-template-columns:repeat(3, 1fr);
+}
+.stat-card{
+  display:grid; gap:6px; align-content:center;
+  padding:16px; border-radius:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.04);
+  box-shadow: var(--shadow);
+  min-height:92px;
+}
+.stat-card i{font-size:18px; color:var(--accent)}
+.stat-card h3{margin:2px 0 0; font-size:24px; color:var(--text); letter-spacing:-0.01em}
+.stat-card p{margin:0; color:var(--muted); font-weight:600}
+
+/* Таблица результатов (CSS Grid вместо <table>) */
+.students-results{display:grid; gap:12px}
+.students-results h2{margin:0 0 2px; font-size:18px}
+
+.results-table{
+  border-radius:12px; overflow:hidden;
+  border:1px solid rgba(255,255,255,0.05);
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  box-shadow: var(--shadow);
+}
+
+.table-header, .table-row{
+  display:grid; grid-template-columns: 2.2fr .8fr .9fr .9fr;
+  gap:10px; align-items:center;
+  padding:12px 14px;
+}
+.table-header{
+  position:sticky; top:0; z-index:1;
+  background:linear-gradient(90deg, rgba(0,255,204,0.05), rgba(108,92,231,0.04));
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  font-weight:700; font-size:13px; color:var(--muted);
+}
+.table-row{
+  border-top:1px solid rgba(255,255,255,0.04);
+  transition:background .18s;
+}
+.table-row:nth-child(even){background:rgba(255,255,255,0.015)}
+.table-row:hover{background:rgba(0,255,204,0.035)}
+
+.student-name{font-weight:700}
+.attempts-count, .best-score{color:var(--text); font-weight:600}
+
+/* Статус сдачи */
+.status{
+  justify-self:start;
+  padding:6px 10px; border-radius:999px; font-size:12px; font-weight:800;
+  border:1px solid; letter-spacing:.02em;
+}
+.status.passed{
+  color:var(--accent);
+  background:rgba(0,255,204,0.08);
+  border-color:rgba(0,255,204,0.22);
+}
+.status.failed{
+  color:#ff9b9b;
+  background:rgba(255,64,64,0.08);
+  border-color:rgba(255,64,64,0.22);
+}
+
+/* Пустое состояние */
+.empty-state{
+  text-align:center; padding:36px;
+  border:1px dashed rgba(255,255,255,0.12);
+  border-radius:12px; color:var(--muted);
+  background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));
+}
+.empty-state i{font-size:26px; margin-bottom:6px; color:var(--accent)}
+.empty-state h2{margin:4px 0 6px}
+
+/* Кнопки (используют твои базовые .btn) */
+.btn.btn--secondary{
+  background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  color:var(--muted); border:1px solid rgba(255,255,255,0.04);
+}
+.btn.btn--secondary:hover{color:var(--text); border-color:rgba(0,255,204,0.18)}
+
+/* Скролл, если много строк */
+.results-table{max-height:560px; overflow:auto}
+.results-table::-webkit-scrollbar{height:10px;width:10px}
+.results-table::-webkit-scrollbar-thumb{background:rgba(0,255,204,0.2);border-radius:10px}
+
+/* Анимация лёгкой подсветки при загрузке */
+.table-row{animation:fadeInUp .35s ease both}
+@keyframes fadeInUp{
+  from{opacity:0; transform:translateY(6px)}
+  to{opacity:1; transform:translateY(0)}
+}
+
+/* Адаптив */
+@media (max-width: 980px){
+  .test-results-page .container{padding:20px}
+  .stats-overview{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width: 720px){
+  .stats-overview{grid-template-columns:1fr}
+  .table-header, .table-row{
+    grid-template-columns: 1.6fr .6fr .8fr .8fr;
+    padding:12px 10px;
+  }
+}
+@media (max-width: 520px){
+  .table-header, .table-row{
+    grid-template-columns: 1.6fr .7fr .9fr;
+  }
+  .table-header span:nth-child(4),
+  .table-row .status{display:none} /* скрываем столбец «Статус» на узких экранах */
+}
+
+/* Уважение reduce motion */
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important; transition:none!important}
+}
+
+
+/* ==========================================
+   COURSE STUDENTS — CyberLab theme
+   ========================================== */
+
+.course-students-page{padding:140px 0 72px}
+.course-students-page .container{max-width:1140px;margin:0 auto;padding:28px}
+
+/* Заголовок */
+.course-students-page .page-header{
+  display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  padding:16px 18px; margin-bottom:18px;
+  border-radius:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04);
+  box-shadow: var(--shadow);
+}
+.course-students-page .page-header h1{margin:0; font-size:22px; letter-spacing:-0.01em}
+
+/* Хедер блока */
+.students-list{display:grid; gap:14px}
+.students-header{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:12px 14px; border-radius:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.04);
+  color:var(--muted); font-weight:700;
+}
+
+/* Сетка карточек студентов */
+.students-grid{
+  display:grid; gap:18px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Карточка студента */
+.student-card{
+  min-height:120px;
+  display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:14px;
+  padding:14px;
+  border-radius:12px; overflow:hidden;
+  background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.03);
+  box-shadow: var(--shadow);
+  transition: transform .24s cubic-bezier(.2,.8,.2,1), box-shadow .24s, border-color .18s, background .18s;
+}
+.student-card:hover{
+  transform: translateY(-6px) scale(1.01);
+  border-color: rgba(0,255,204,0.12);
+  box-shadow: 0 18px 40px rgba(2,6,23,0.6);
+}
+
+/* Аватар (иконка) */
+.student-avatar{
+  width:56px; height:56px; border-radius:14px; flex:0 0 56px;
+  display:grid; place-items:center;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.06);
+}
+.student-avatar i{font-size:22px; color:var(--accent)}
+
+/* Информация */
+.student-info h3{margin:0 0 4px; font-size:16px}
+.student-info .student-email{margin:0; color:var(--muted); font-size:13px}
+.student-info .student-login{margin:2px 0 0; color:var(--muted); opacity:.9; font-size:12px}
+
+/* Действия */
+.student-actions .btn{white-space:nowrap}
+.btn--small{padding:8px 10px; font-size:13px; border-radius:10px}
+
+/* Пустое состояние — общее */
+.empty-state{
+  text-align:center; padding:36px;
+  border:1px dashed rgba(255,255,255,0.12);
+  border-radius:12px; color:var(--muted);
+  background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));
+}
+.empty-state .empty-icon{font-size:28px; color:var(--accent); margin-bottom:8px}
+
+/* Кнопки — базовые классы уже есть, чуть уточним secondary */
+.btn.btn--secondary{
+  background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  color:var(--muted);
+  border:1px solid rgba(255,255,255,0.04);
+}
+.btn.btn--secondary:hover{color:var(--text); border-color:rgba(0,255,204,0.18)}
+
+/* Анимация плавного появления карточек */
+.student-card{animation:fadeInUp .35s ease both}
+@keyframes fadeInUp{
+  from{opacity:0; transform:translateY(6px)}
+  to{opacity:1; transform:translateY(0)}
+}
+
+/* Адаптив */
+@media (max-width: 1080px){
+  .course-students-page .container{padding:22px}
+}
+@media (max-width: 980px){
+  .students-grid{grid-template-columns: repeat(2, 1fr)}
+}
+@media (max-width: 620px){
+  .students-grid{grid-template-columns: 1fr}
+  .student-card{grid-template-columns:auto 1fr; grid-template-rows:auto auto; align-items:start}
+  .student-actions{grid-column:1 / -1; justify-self:end}
+}
+
+/* Уважение reduce motion */
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important; transition:none!important}
+}
+
+
+
+
+/* ==========================================
+   ADMIN COURSE PANEL — CyberLab theme
+   Работает поверх общих переменных из style.css
+   ========================================== */
+
+/* Отступ под фиксированную шапку */
+.admin-page{padding:140px 0 80px}
+.admin-page .container{max-width:1140px;margin:0 auto;padding:28px}
+
+/* Заголовок страницы */
+.admin-header{
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  padding:16px 18px; margin-bottom:18px;
+  border-radius:14px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04);
+  box-shadow: var(--shadow);
+}
+.admin-header h1{margin:0; font-size:22px; letter-spacing:-0.01em}
+.admin-header .btn.btn--secondary{margin-left:auto}
+
+/* Контент: вертикальная колонка секций */
+.admin-content{display:grid; gap:18px}
+
+/* Общий блок-секция (карта) */
+.admin-section{
+  border-radius:14px; overflow:hidden;
+  background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.03);
+  box-shadow: var(--shadow);
+}
+.admin-section > h2{
+  margin:0; padding:16px 18px; font-size:18px;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+/* Форма внутри секции */
+.admin-form{padding:16px 18px; display:grid; gap:12px}
+
+/* Группа полей */
+.form-group{display:grid; gap:8px}
+.form-group label{font-weight:600; font-size:13px}
+.form-control{
+  width:100%;
+  padding:12px 12px; border-radius:12px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.06);
+  color:var(--text); font:inherit;
+  transition: border-color .18s, box-shadow .18s, background .18s;
+}
+.form-control:focus{
+  outline:none;
+  border-color: rgba(0,255,204,0.22);
+  box-shadow: 0 0 0 4px rgba(0,255,204,0.08);
+  background:rgba(255,255,255,0.05);
+}
+textarea.form-control{min-height:140px; resize:vertical}
+select.form-control{appearance:none; background-image:linear-gradient(45deg, transparent 50%, rgba(255,255,255,0.4) 50%), linear-gradient(135deg, rgba(255,255,255,0.4) 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 12px) 50%; background-size:6px 6px, 6px 6px; background-repeat:no-repeat}
+
+/* Кнопки (дополнения) */
+.btn{display:inline-flex; align-items:center; gap:8px; cursor:pointer}
+.btn--small{padding:8px 10px; font-size:13px; border-radius:10px}
+.btn--danger{
+  color:#fff; background:rgba(255,64,64,0.12);
+  border:1px solid rgba(255,64,64,0.35);
+}
+.btn--danger:hover{box-shadow:0 0 0 4px rgba(255,64,64,0.1); border-color:rgba(255,64,64,0.55)}
+
+/* Алёрты флаш-сообщений (если выводятся) */
+.alert-messages{display:grid; gap:10px; margin:12px 0}
+.alert{padding:10px 12px; border-radius:10px; font-size:14px}
+.alert-success{background:rgba(0,255,204,0.08); border:1px solid rgba(0,255,204,0.28)}
+.alert-error{background:rgba(255,64,64,0.08); border:1px solid rgba(255,64,64,0.35)}
+.alert-warning{background:rgba(255,214,64,0.08); border:1px solid rgba(255,214,64,0.35)}
+
+/* ===== Структура курса (модули и уроки) ===== */
+
+.module-card{
+  margin:14px 18px; padding:14px 14px 2px; border-radius:12px;
+  background:linear-gradient(180deg, rgba(0,255,204,0.012), rgba(108,92,231,0.012));
+  border:1px solid rgba(255,255,255,0.04);
+}
+.module-header{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding-bottom:10px; border-bottom:1px dashed rgba(255,255,255,0.08);
+}
+.module-header h3{margin:0; font-size:16px}
+.module-card > p{color:var(--muted); margin:10px 0 12px}
+
+/* Список уроков */
+.lessons-list{display:grid; gap:12px; margin:12px 0 14px}
+
+/* Карточка урока */
+.lesson-card{
+  border-radius:12px; overflow:hidden;
+  background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.04);
+  transition:transform .22s, box-shadow .22s, border-color .18s;
+}
+.lesson-card:hover{
+  transform:translateY(-4px);
+  border-color: rgba(0,255,204,0.16);
+  box-shadow: 0 12px 30px rgba(2,6,23,0.5);
+}
+.lesson-header{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:12px 12px;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.lesson-header h4{margin:0; font-size:15px; display:flex; align-items:center; gap:8px}
+.lesson-card > p{margin:10px 12px; color:var(--muted)}
+
+/* Тест внутри урока */
+.test-questions{padding:12px}
+.test-questions h5{margin:0 0 10px; font-size:14px}
+.question-item{
+  padding:10px 12px; margin-bottom:10px; border-radius:10px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.05);
+}
+.question-item strong{display:inline-block; margin-bottom:6px}
+.question-item ul{margin:8px 0 0 18px}
+.question-item li{margin:4px 0; color:var(--muted)}
+.question-item li::marker{color:var(--accent)}
+
+/* Мини-формы добавления вопросов внутри теста */
+.test-questions .admin-form{
+  margin-top:12px; padding:12px; border-radius:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));
+  border:1px dashed rgba(255,255,255,0.08);
+}
+
+/* Хелпер для строк в одной линии при узких полях */
+.inline-row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+@media (max-width:720px){.inline-row{grid-template-columns:1fr}}
+
+/* Ховеры ссылок внутри админки */
+.admin-page a:not(.btn){color:var(--accent); text-decoration:none}
+.admin-page a:not(.btn):hover{text-decoration:underline}
+
+/* Мелкие улучшения */
+.d-inline{display:inline}
+.badge{
+  display:inline-flex; align-items:center; padding:4px 8px; border-radius:999px;
+  font-size:12px; font-weight:700; color:var(--accent);
+  background:linear-gradient(90deg, rgba(0,255,204,0.08), rgba(108,92,231,0.06));
+  border:1px solid rgba(0,255,204,0.18);
+}
+
+/* Анимация появления карточек */
+.admin-section, .module-card, .lesson-card{animation:fadeInUp .35s ease both}
+@keyframes fadeInUp{
+  from{opacity:0; transform:translateY(6px)}
+  to{opacity:1; transform:translateY(0)}
+}
+
+/* Адаптивы */
+@media (max-width:1080px){
+  .admin-page .container{padding:22px}
+}
+@media (max-width:640px){
+  .admin-header{padding:12px 14px}
+  .admin-header .btn.btn--secondary{margin-left:0}
+}
+
+/* Уважение reduce motion */
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important; transition:none!important}
+}
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ course.name }} | SkillUp</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container">
+            <div class="header__inner">
+                <a href="{{ url_for('user.index')}}" class="logo">
+                    <img src="{{url_for('static', filename = 'img/logo.png')}}" alt="SkillUp">
+                </a>
+                <nav class="nav">
+                    <ul class="nav__list">
+                        <li><a href="{{ url_for('user.index')}}" class="nav__link">Главная</a></li>
+                        <li><a href="{{ url_for('post.create')}}" class="nav__link active">Курсы</a></li>
+                        <li><a href="{{ url_for('teacher.create')}}" class="nav__link">Преподаватели</a></li>
+                        <li><a href="{{ url_for('user.contacts')}}" class="nav__link">Контакты</a></li>
+                        {% if current_user.is_authenticated %}
+                            <li><a href="{{ url_for('user.account') }}" class="nav__link">Личный кабинет</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                <div class="header__auth">
+                    {% if current_user.is_authenticated %}
+                        <span class="user-greeting">{{ current_user.name }}</span>
+                        <a href="{{ url_for('user.logout') }}" class="btn btn--login">Выйти</a>
+                    {% else %}
+                        <a href="{{ url_for('user.login')}}" class="btn btn--login">Войти</a>
+                        <a href="{{ url_for('user.register')}}" class="btn btn--primary">Записаться</a>
+                    {% endif %}
+                </div>
+                <button class="burger" id="burger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент курса -->
+    <main class="course-page">
+        <section class="course-hero">
+            <div class="container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alert-messages">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="course-hero__inner">
+                    <div class="course-hero__content">
+                        <h1 class="course-hero__title">{{ course.name }}</h1>
+                        <p class="course-hero__subtitle">{{ course.bio }}</p>
+                        
+                        <div class="course-hero__meta">
+                            <div class="course-hero__meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span>{{ course.exp }} месяцев</span>
+                            </div>
+                            <div class="course-hero__meta-item">
+                                <i class="fas fa-level-up-alt"></i>
+                                <span>{{ course.level }}</span>
+                            </div>
+                            <div class="course-hero__meta-item">
+                                <i class="fas fa-user-graduate"></i>
+                                <span>100+ студентов</span>
+                            </div>
+                        </div>
+                        
+                        {% if current_user.status == 'student' %}
+                        <div class="course-hero__buttons">
+                            <form action="{{ url_for('post.enroll', id=course.id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn--primary btn--large">Записаться</button>
+                            </form>
+                        </div>
+                        {% elif current_user.status == 'teacher' %}
+                        <div class="course-hero__buttons">
+                            <form action="#" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn--primary btn--large">Хочу преподавать этот курс</button>
+                            </form>
+                        </div>
+                        {% else %}
+                        <div class="course-hero__buttons">
+                            <a href="{{ url_for('post.edit', id=course.id) }}" class="btn-edit" title="Изменить">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ url_for('post.delete', id=course.id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn-delete" title="Удалить" 
+                                    onclick="return confirm('Удалить курс «{{ course.name }}»?')">
+                                <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="course-hero__image">
+                        <img src="{{ url_for('static', filename=course.photo) if course.photo else url_for('static', filename='img/11.png') }}" alt="{{ course.name }}">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Основной контент по центру -->
+        <section class="course-main-content">
+            <div class="container">
+                <div class="course-centered-content">
+                    <!-- Блок "О курсе" -->
+                    <div class="course-section">
+                        <h2 class="course-section__title">О курсе</h2>
+                        <div class="course-section__content">
+                            <p>Этот курс идеально подходит для тех, кто хочет освоить профессию "{{ course.name }}". Вы получите все необходимые знания и практические навыки, которые помогут вам начать карьеру в этой области.</p>
+                            <p>Программа курса разработана практикующими специалистами и включает актуальные технологии и методики.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Блок "Для кого этот курс" -->
+                    <div class="course-section">
+                        <h2 class="course-section__title">Для кого этот курс</h2>
+                        <div class="course-section__content">
+                            <ul class="course-list">
+                                <li>Для начинающих без опыта</li>
+                                <li>Для тех, кто хочет сменить профессию</li>
+                                <li>Для практикующих специалистов, желающих повысить квалификацию</li>
+                                <li>Для предпринимателей, которые хотят освоить новые навыки</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Блок "Программа курса" -->
+                    <div class="course-section">
+                        <h2 class="course-section__title">Программа курса</h2>
+                        <div class="course-section__content">
+                            <div class="empty-state">
+                                <i class="fas fa-book-open empty-icon"></i>
+                                <h3>Программа курса в разработке</h3>
+                                <p>Администратор скоро добавит подробную программу</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Блок "Результаты обучения" -->
+                    <div class="course-section">
+                        <h2 class="course-section__title">Результаты обучения</h2>
+                        <div class="course-section__content">
+                            <div class="course-results">
+                                <div class="result-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Освоите основные технологии и инструменты</span>
+                                </div>
+                                <div class="result-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Создадите несколько проектов для портфолио</span>
+                                </div>
+                                <div class="result-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Получите сертификат об окончании</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Боковая панель тоже по центру, но ниже -->
+        <section class="course-sidebar-section">
+            <div class="container">
+                <div class="sidebar-centered-content">
+                    <div class="sidebar-grid">
+                        <!-- Что вы получите -->
+                        <div class="sidebar-card">
+                            <h3 class="sidebar-card__title">Что вы получите</h3>
+                            <ul class="sidebar-features">
+                                <li class="sidebar-feature">
+                                    <div class="sidebar-feature__icon">
+                                        <i class="fas fa-laptop-code"></i>
+                                    </div>
+                                    <span>Практические навыки по направлению "{{ course.name }}"</span>
+                                </li>
+                                <li class="sidebar-feature">
+                                    <div class="sidebar-feature__icon">
+                                        <i class="fas fa-certificate"></i>
+                                    </div>
+                                    <span>Сертификат об окончании курса</span>
+                                </li>
+                                <li class="sidebar-feature">
+                                    <div class="sidebar-feature__icon">
+                                        <i class="fas fa-briefcase"></i>
+                                    </div>
+                                    <span>Помощь с трудоустройством</span>
+                                </li>
+                                <li class="sidebar-feature">
+                                    <div class="sidebar-feature__icon">
+                                        <i class="fas fa-infinity"></i>
+                                    </div>
+                                    <span>Доступ к материалам навсегда</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Преподаватель -->
+                        <div class="sidebar-card">
+                            <h3 class="sidebar-card__title">Преподаватель</h3>
+                            <div class="mentor-info">
+                                <h4>Сан Саныч</h4>
+                                <p>Опытный специалист с многолетним стажем</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__inner">
+                <div class="footer__col">
+                    <a href="{{ url_for('user.index')}}" class="logo">
+                        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SkillUp">
+                    </a>
+                    <p class="footer__text">Онлайн-школа SkillUp - обучение современным профессиям с гарантией результата.</p>
+                </div>
+                <div class="footer__col">
+                    <h3 class="footer__title">Контакты</h3>
+                    <ul class="footer__contacts">
+                        <li><i class="fas fa-envelope"></i> info@skillup.ru</li>
+                        <li><i class="fas fa-phone"></i> +7 (999) 123-45-67</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>&copy; 2025 SkillUp. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

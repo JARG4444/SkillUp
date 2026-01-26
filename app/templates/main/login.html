@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillUp | Вход</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{url_for('static', filename = 'css/style.css')}}">
+</head>
+<body>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container">
+            <div class="header__inner">
+                <a href="{{ url_for('user.index')}}" class="logo">
+                    <img src="{{url_for('static', filename='img/logo.png')}}" alt="SkillUp">
+                </a>
+                <nav class="nav">
+                    <ul class="nav__list">
+                        <li><a href="{{ url_for('user.index')}}" class="nav__link active">Главная</a></li>
+                        <li><a href="{{ url_for('post.create')}}" class="nav__link">Курсы</a></li>
+                        <li><a href="{{ url_for('teacher.create')}}" class="nav__link">Преподаватели</a></li>
+                        <li><a href="{{ url_for('user.contacts')}}" class="nav__link">Контакты</a></li>
+                        {% if current_user.is_authenticated %}
+                            <li><a href="{{ url_for('user.account') }}" class="nav__link">Личный кабинет</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                <div class="header__auth">
+                    {% if current_user.is_authenticated %}
+                        <span class="user-greeting">{{ current_user.name }}</span>
+                        <a href="{{ url_for('user.logout') }}" class="btn btn--login">Выйти</a>
+                    {% else %}
+                        <a href="{{ url_for('user.login')}}" class="btn btn--login">Войти</a>
+                        <a href="{{ url_for('user.register')}}" class="btn btn--primary">Записаться</a>
+                    {% endif %}
+                </div>
+                <button class="burger" id="burger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной блок входа -->
+    <section class="auth-section">
+        <div class="container">
+            <div class="auth__wrapper">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="alert-messages">
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                <div class="auth__header">
+                    <h1>Вход в аккаунт</h1>
+                    <p>Введите свои данные для входа</p>
+                </div>
+                
+                <form class="auth__form" method="POST" action="{{ url_for('user.login') }}">
+                    <div class="form__group">
+                        <label for="login">Email или никнейм</label>
+                        <input type="text" id="login" name="login" placeholder="Ваш email или никнейм" required>
+                        <i class="fas fa-user"></i>
+                    </div>
+                    
+                    <div class="form__group">
+                        <label for="password">Пароль</label>
+                        <input type="password" id="password" name="password" placeholder="Ваш пароль" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    
+                    <div class="form__row">
+                        <div class="form__checkbox">
+                            <input type="checkbox" id="remember" name="remember">
+                            <label for="remember">Запомнить меня</label>
+                        </div>
+                        <a href="#" class="form__link">Забыли пароль?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn btn--primary btn--block">Войти</button>
+                    
+                    <div class="auth__footer">
+                        <p>Ещё нет аккаунта? <a href="{{ url_for('user.register') }}">Зарегистрироваться</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__inner">
+                <div class="footer__col">
+                    <a href="{{ url_for('user.index')}}" class="logo">
+                        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SkillUp">
+                    </a>
+                    <p class="footer__text">Онлайн-школа SkillUp - обучение современным профессиям с гарантией результата.</p>
+                </div>
+                <div class="footer__col">
+                    <h3 class="footer__title">Контакты</h3>
+                    <ul class="footer__contacts">
+                        <li><i class="fas fa-envelope"></i> info@skillup.ru</li>
+                        <li><i class="fas fa-phone"></i> +7 (999) 123-45-67</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>&copy; 2025 SkillUp. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/scriptlog.js') }}"></script>
+</body>
+</html>

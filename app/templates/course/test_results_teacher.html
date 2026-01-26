@@ -1,0 +1,13 @@
+<!-- test_results_teacher.html -->
+<h1>Результаты студентов</h1>
+<table border="1">
+  <tr><th>Студент</th><th>Результат</th><th>Дата</th></tr>
+  {% for a in attempts %}
+  <tr>
+    <td>{{ a.student.name }}</td>
+    <td>{{ a.score }}/{{ a.total }}</td>
+    <td>{{ a.created_at }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<a href="{{ url_for('course.course_detail', course_id=course.id) }}">Назад</a>

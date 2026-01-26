@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление пользователями | SkillUp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header__inner">
+                <a href="{{ url_for('user.index')}}" class="logo">
+                    <img src="{{url_for('static', filename = 'img/logo.png')}}" alt="SkillUp">
+                </a>
+                <nav class="nav">
+                    <ul class="nav__list">
+                        <li><a href="{{ url_for('user.index')}}" class="nav__link">Главная</a></li>
+                        <li><a href="{{ url_for('post.create')}}" class="nav__link">Курсы</a></li>
+                        <li><a href="{{ url_for('teacher.create')}}" class="nav__link">Преподаватели</a></li>
+                        <li><a href="{{ url_for('user.contacts')}}" class="nav__link">Контакты</a></li>
+                        {% if current_user.is_authenticated %}
+                            <li><a href="{{ url_for('user.account') }}" class="nav__link active">Личный кабинет</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                <div class="header__auth">
+                    {% if current_user.is_authenticated %}
+                        <span class="user-greeting">{{ current_user.name }}</span>
+                        <a href="{{ url_for('user.logout') }}" class="btn btn--login">Выйти</a>
+                    {% else %}
+                        <a href="{{ url_for('user.login')}}" class="btn btn--login">Войти</a>
+                        <a href="{{ url_for('user.register')}}" class="btn btn--primary">Записаться</a>
+                    {% endif %}
+                </div>
+                <button class="burger" id="burger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="admin-users-page">
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert-messages">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            <div class="admin-header">
+                <h1>Управление пользователями</h1>
+            </div>
+
+            <!-- Таблица студентов -->
+            <div class="user-section">
+                <h2 class="section-title">Студенты
+                    <span class="badge">{{ students|length }}</span>
+                </h2>
+                
+                {% if students %}
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Имя</th>
+                            <th>Email</th>
+                            <th>Логин</th>
+                            <th>Статус</th>
+                            <th>Курсы</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td><strong>{{ student.id }}</strong></td>
+                            <td>{{ student.name }}</td>
+                            <td>{{ student.email }}</td>
+                            <td>{{ student.login }}</td>
+                            <td>
+                                <span class="status-badge status-student">Студент</span>
+                            </td>
+                            <td>
+                                {% if student.courses.count() > 0 %}
+                                    <div class="courses-list">
+                                        {% for course in student.courses %}
+                                        <div class="course-item {% if student.has_free_lesson(course) %}course-item-free{% endif %}">
+                                            <span>{{ course.name }}</span>
+                                            {% if student.has_free_lesson(course) %}
+                                            <span class="free-badge">Бесплатный урок</span>
+                                            {% endif %}
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <span class="empty-courses">Нет курсов</span>
+                                {% endif %}
+                            </td>
+                            <td class="user-actions">
+                                <a href="#" class="btn-edit" title="Изменить">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ url_for('user.delete_user', user_id=student.id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn-delete" title="Удалить" onclick="return confirm('Удалить пользователя?')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>Нет зарегистрированных студентов</p>
+                {% endif %}
+            </div>
+
+            <!-- Таблица преподавателей -->
+            <div class="user-section">
+                <h2 class="section-title">
+                    <i class="fas fa-chalkboard-teacher"></i> Преподаватели
+                    <span class="badge">{{ teachers|length }}</span>
+                </h2>
+                
+                {% if teachers %}
+                <div class="table-responsive">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Имя</th>
+                                <th>Email</th>
+                                <th>Логин</th>
+                                <th>Статус</th>
+                                <th>Курсы</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for teacher in teachers %}
+                            <tr>
+                                <td><strong>{{ teacher.id }}</strong></td>
+                                <td>{{ teacher.name }}</td>
+                                <td>{{ teacher.email }}</td>
+                                <td>{{ teacher.login }}</td>
+                                <td>
+                                    <span class="status-badge status-teacher">
+                                         Преподаватель
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="teacher-courses">
+                                        {% if teacher.teaching_courses.count() > 0 %}
+                                            {% for course in teacher.teaching_courses %}
+                                            <div class="assigned-course">
+                                                <span>{{ course.name }}</span>
+                                                <form action="{{ url_for('user.remove_course', teacher_id=teacher.id, course_id=course.id) }}" method="POST" style="display: inline;">
+                                                    <button type="submit" class="remove-course-btn" title="Убрать с курса" 
+                                                            onclick="return confirm('Убрать преподавателя с курса {{ course.name }}?')">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="empty-courses">Не прикреплен к курсам</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="user-actions">
+                                    <button class="btn-assign" onclick="openAssignModal({{ teacher.id }})" title="Прикрепить к курсу">
+                                        <i class="fas fa-link"></i> Прикрепить
+                                    </button>
+                                    <a href="#" class="btn-edit" title="Редактировать">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ url_for('user.delete_user', user_id=teacher.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn-delete" title="Удалить" 
+                                                onclick="return confirm('Удалить преподавателя {{ teacher.name }}?')">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-chalkboard-teacher empty-icon"></i>
+                    <h3>Преподаватели не найдены</h3>
+                    <p>В системе еще нет зарегистрированных преподавателей</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Включите модальное окно -->
+            {% include 'main/modal.html' %}
+        </div>
+    </section>
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__inner">
+                <div class="footer__col">
+                    <a href="{{ url_for('user.index')}}" class="logo">
+                        <img src="{{url_for('static', filename = 'img/logo.png')}}" alt="SkillUp">
+                    </a>
+                    <p class="footer__text">Онлайн-школа SkillUp – обучение современным профессиям с гарантией результата.</p>
+                    <div class="footer__social">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                    </div>
+                </div>
+                <div class="footer__col">
+                    <h3 class="footer__title">Курсы</h3>
+                    <ul class="footer__links">
+                        <li><a href="#">Веб-разработка</a></li>
+                        <li><a href="#">Дизайн</a></li>
+                        <li><a href="#">Маркетинг</a></li>
+                        <li><a href="#">Программирование</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h3 class="footer__title">Контакты</h3>
+                    <ul class="footer__contacts">
+                        <li><i class="fas fa-envelope"></i> info@skillup.ru</li>
+                        <li><i class="fas fa-phone"></i> +7 (999) 123-45-67</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Ростов-на-Дону, ул. Гагарина, 1</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>&copy; 2025 SkillUp. Все права защищены.</p>
+                <a href="#">Политика конфиденциальности</a>
+            </div>
+        </div>
+    </footer>
+    <script src="{{url_for('static', filename = 'js/script.js')}}"></script>
+    <script src="{{url_for('static', filename = 'js/modal.js')}}"></script>
+</body>
+</html>
